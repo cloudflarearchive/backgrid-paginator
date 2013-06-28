@@ -16,12 +16,6 @@ module.exports = function (grunt) {
 
     pkg: grunt.file.readJSON("package.json"),
 
-    banner: '/*!\n  <%= pkg.name %>\n' +
-      '  <%= pkg.repository.url %>\n\n' +
-      '  Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author %>\n' +
-      '  Licensed under the MIT license.\n' +
-      '*/\n\n',
-
     clean: {
       options: {
         force: true
@@ -108,28 +102,15 @@ module.exports = function (grunt) {
           "backgrid-paginator.min.js": ["backgrid-paginator.js"]
         }
       }
-    },
-    usebanner: {
-      dist: {
-        options: {
-          position: 'top',
-          banner: '<%= banner %>'
-        },
-        files: {
-          src: [ '*.min.css' ]
-        }
-      }
     }
   });
 
   grunt.loadNpmTasks("grunt-contrib-clean");
-  grunt.loadNpmTasks("grunt-contrib-concat");
   grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-recess");
   grunt.loadNpmTasks("grunt-jsduck");
   grunt.loadNpmTasks("grunt-contrib-jasmine");
-  grunt.loadNpmTasks('grunt-banner');
 
-  grunt.registerTask("dist", [ "uglify", "recess", "usebanner" ] );
+  grunt.registerTask("dist", ["uglify", "recess"]);
   grunt.registerTask("default", ["clean", "jsduck", "dist", "jasmine"]);
 };
