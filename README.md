@@ -1,3 +1,9 @@
+backgrid-paginator
+==================
+
+[![Build Status](https://travis-ci.org/wyuenho/backgrid-paginator.png?branch=master)](https://travis-ci.org/wyuenho/backgrid-paginator)
+
+
 Dependencies
 ============
 
