@@ -5,8 +5,22 @@
   Copyright (c) 2013 Jimmy Yuen Ho Wong and contributors
   Licensed under the MIT @license.
 */
+(function (factory) {
 
-(function (_, Backbone, Backgrid) {
+  // CommonJS
+  if (typeof exports == "object") {
+    module.exports = factory(require("underscore"),
+                             require("backbone"),
+                             require("backgrid"));
+  }
+  // Browser
+  else if (typeof _ !== "undefined" &&
+           typeof Backbone !== "undefined" &&
+           typeof Backgrid !== "undefined") {
+    factory(_, Backbone, Backgrid);
+  }
+
+}(function (_, Backbone, Backgrid) {
 
   "use strict";
 
@@ -336,4 +350,4 @@
 
   });
 
-}(_, Backbone, Backgrid));
+}));
