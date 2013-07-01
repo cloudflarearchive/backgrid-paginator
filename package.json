@@ -29,5 +29,6 @@
     "grunt-recess": "~0.3.3",
     "grunt-template-jasmine-istanbul": "~0.2.4",
     "grunt-contrib-jasmine": "~0.5.1"
-  }
+  },
+  "private": true
 }
