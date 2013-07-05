@@ -11,7 +11,8 @@
   if (typeof exports == "object") {
     module.exports = factory(require("underscore"),
                              require("backbone"),
-                             require("backgrid"));
+                             require("backgrid"),
+                             require("backbone-pageable"));
   }
   // Browser
   else if (typeof _ !== "undefined" &&
