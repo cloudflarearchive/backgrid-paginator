@@ -300,7 +300,7 @@
       var winStart = window[0], winEnd = window[1];
 
       for (var i = winStart; i < winEnd; i++) {
-        handles.push(new PageHandle({
+        handles.push(new this.pageHandle({
           collection: collection,
           pageIndex: i
         }));
@@ -316,11 +316,11 @@
             label: value.label
           };
           handleCtorOpts["is" + key.slice(0, 1).toUpperCase() + key.slice(1)] = true;
-          var handle = new PageHandle(handleCtorOpts);
+          var handle = new this.pageHandle(handleCtorOpts);
           if (key == "rewind" || key == "back") handles.unshift(handle);
           else handles.push(handle);
         }
-      });
+      }, this);
 
       return handles;
     },
