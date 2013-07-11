@@ -136,7 +136,7 @@
       var lastPage = state.lastPage;
 
       _.extend(this, _.pick(options,
-                            ["isRewind", "isBack", "isForward", "isFastForward"], "paginator"));
+                            ["isRewind", "isBack", "isForward", "isFastForward", "paginator"]));
 
       var pageIndex;
       if (this.isRewind) pageIndex = firstPage;
