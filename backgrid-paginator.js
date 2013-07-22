@@ -186,8 +186,14 @@
     changePage: function (e) {
       e.preventDefault();
       var $el = this.$el;
+      var theFilter = $(".backgrid-filter");
+      var data = {}
+      if ($(theFilter).length > 0){
+          var filterBox = $(theFilter).find("input[type='text']");
+          data[$(filterBox).attr("name")] = $(filterBox).val();
+      }
       if (!$el.hasClass("active") && !$el.hasClass("disabled")) {
-        this.collection.getPage(this.pageIndex);
+          this.collection.getPage(this.pageIndex, {data: data});
       }
       return this;
     }
