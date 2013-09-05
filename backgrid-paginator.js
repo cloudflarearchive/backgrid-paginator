@@ -210,7 +210,7 @@
     className: "backgrid-paginator",
 
     /** @property */
-    windowSize: 10,
+    windowSize: 9,
 
     /**
        @property {Object.<string, Object.<string, string>>} controls You can
@@ -279,7 +279,7 @@
       lastPage = Math.max(0, firstPage ? lastPage - 1 : lastPage);
       var currentPage = Math.max(state.currentPage, state.firstPage);
       currentPage = firstPage ? currentPage - 1 : currentPage;
-      var windowStart = Math.floor(currentPage / this.windowSize) * this.windowSize;
+      var windowStart = var windowStart = Math.max(0,Math.ceil(currentPage - (this.windowSize/2)));
       var windowEnd = Math.min(lastPage + 1, windowStart + this.windowSize);
       return [windowStart, windowEnd];
     },
