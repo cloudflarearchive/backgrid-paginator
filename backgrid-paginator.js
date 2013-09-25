@@ -188,6 +188,7 @@
       var $el = this.$el;
       if (!$el.hasClass("active") && !$el.hasClass("disabled")) {
         this.collection.getPage(this.pageIndex);
+        $el.addClass("active");
       }
       return this;
     }
