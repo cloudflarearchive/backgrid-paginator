@@ -261,7 +261,7 @@
       this.listenTo(collection, "add", this.render);
       this.listenTo(collection, "remove", this.render);
       this.listenTo(collection, "reset", this.render);
-      var goBackFirstOnSort = options.goBackFirstOnSort || this.goBackFirstOnSort;
+      var goBackFirstOnSort = options.goBackFirstOnSort ? options.goBackFirstOnSort : this.goBackFirstOnSort;
       if (goBackFirstOnSort && collection.fullCollection) {
         this.listenTo(collection.fullCollection, "sort", function () {
           collection.getFirstPage();
