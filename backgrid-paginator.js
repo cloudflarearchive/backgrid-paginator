@@ -82,7 +82,7 @@
        anchor elements. It can be a string or an Underscore template function
        that takes a mandatory `label` parameter.
     */
-    title: _.template('Page <%- label %>'),
+    title: _.template('Page <%- label %>', null, {variable: null}),
 
     /**
        @property {boolean} isRewind Whether this handle represents a rewind
