@@ -254,7 +254,6 @@
        @param {boolean} [options.goBackFirstOnSort=true]
     */
     initialize: function (options) {
-      Backgrid.requireOptions(options, ["collection"]);
 
       this.controls = options.controls || this.controls;
       this.pageHandle = options.pageHandle || this.pageHandle;
