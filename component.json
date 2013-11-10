@@ -1,0 +1,25 @@
+{
+  "name": "backgrid-paginator",
+  "repo": "wyuenho/backgrid-paginator",
+  "description": "",
+  "version": "0.3.0",
+  "keywords": [
+    "backbone",
+    "backgrid",
+    "paginator",
+    "pagination"
+  ],
+  "main": "backgrid-paginator.js",
+  "scripts": [
+    "backgrid-paginator.js"
+  ],
+  "styles": [
+    "backgrid-paginator.css"
+  ],
+  "dependencies": {
+    "jashkenas/underscore": "*",
+    "jashkenas/backbone": "*",
+    "wyuenho/backgrid": "*"
+  },
+  "license": "MIT"
+}
