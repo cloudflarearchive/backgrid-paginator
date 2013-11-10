@@ -1,7 +1,7 @@
 {
   "name": "backgrid-paginator",
   "version": "0.3.0",
-  "description": "Backgrid.js extension for pagination",
+  "description": "Backgrid.js extension for pagination.",
   "main": "backgrid-paginator.js",
   "scripts": {
     "test": "grunt jasmine"
