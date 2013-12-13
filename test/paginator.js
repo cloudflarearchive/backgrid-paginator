@@ -255,6 +255,31 @@ describe("A PageHandle", function () {
       expect(handle.$("a").text()).toBe("2");
     });
 
+    describe("when disabled", function () {
+      it("does not become active when clicked", function () {
+        var handle = new Backgrid.Extension.PageHandle({
+          collection: collection,
+          pageIndex: 1
+        });
+        handle.render();
+        handle.$el.addClass("disabled");
+        handle.$("a").click();
+        expect(handle.$el.hasClass("active")).toBe(false);
+      });
+    });
+
+    describe("when not disabled", function () {
+      it("becomes active when clicked", function () {
+        var handle = new Backgrid.Extension.PageHandle({
+          collection: collection,
+          pageIndex: 1
+        });
+        handle.render();
+        handle.$("a").click();
+        expect(handle.$el.hasClass("active")).toBe(true);
+      });
+    });
+
     it("the handle will get the page on click", function () {
       var handle = new Backgrid.Extension.PageHandle({
         collection: collection,
