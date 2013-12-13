@@ -213,14 +213,19 @@
     windowSize: 10,
 
     /**
-       @property {number} the number used to divide `windowSize` by to yield the
-       number of pages slide when half of the pages from within a window have
-       been reached. For example, the default windowSize(10) / slideThreshold(2)
-       yields 5, which means the window will slide forward 5 pages as soon as
-       you've reached page 6. The smaller the yielded number the less pages to
-       slide, and vice versa.
+       @property {number} slideScale the number used by #slideHowMuch to scale
+       `windowSize` to yield the number of pages to slide when half of the pages
+       from within a window have been reached. For example, the default
+       windowSize(10) * slideScale(0.5) yields 5, which means the window will
+       slide forward 5 pages as soon as you've reached page 6. The smaller the
+       scale factor the less pages to slide, and vice versa.
+
+       Also See:
+
+       - #slideMaybe
+       - #slideHowMuch
     */
-    slideThreshold: 2,
+    slideScale: 0.5,
 
     /**
        @property {Object.<string, Object.<string, string>>} controls You can
@@ -266,7 +271,7 @@
     initialize: function (options) {
       this.controls = options.controls || this.controls;
       this.pageHandle = options.pageHandle || this.pageHandle;
-      this.slideThreshold = options.slideThreshold || this.slideThreshold;
+      this.slideScale = options.slideScale || this.slideScale;
 
       var collection = this.collection;
       this.listenTo(collection, "add", this.render);
@@ -280,6 +285,44 @@
       }
     },
 
+    /**
+      Decides whether the window should slide. This method should return 1 if
+      sliding should occur and 0 otherwise. The default is sliding should occur
+      if half of the pages in a window has been reached.
+
+      __Note__: All the parameters have been normalized to be 0-based.
+
+      @param {number} firstPage
+      @param {number} lastPage
+      @param {number} currentPage
+      @param {number} windowSize
+      @param {number} slideScale
+
+      @return {0|1}
+     */
+    slideMaybe: function (firstPage, lastPage, currentPage, windowSize, slideScale) {
+      return Math.round(currentPage % windowSize / windowSize);
+    },
+
+    /**
+      Decides how many pages to slide when sliding should occur. The default
+      simply scales the `windowSize` to arrive at a fraction of the `windowSize`
+      to increment.
+
+      __Note__: All the parameters have been normalized to be 0-based.
+
+      @param {number} firstPage
+      @param {number} lastPage
+      @param {number} currentPage
+      @param {number} windowSize
+      @param {number} slideScale
+
+      @return {number}
+     */
+    slideThisMuch: function (firstPage, lastPage, currentPage, windowSize, slideScale) {
+      return ~~(windowSize * slideScale);
+    },
+
     _calculateWindow: function () {
       var collection = this.collection;
       var state = collection.state;
@@ -291,10 +334,11 @@
       var currentPage = Math.max(state.currentPage, state.firstPage);
       currentPage = firstPage ? currentPage - 1 : currentPage;
       var windowSize = this.windowSize;
-      var slideThreshold = this.slideThreshold;
+      var slideScale = this.slideScale;
       var windowStart = Math.floor(currentPage / windowSize) * windowSize;
-      if (currentPage <= lastPage - Math.floor(windowSize / slideThreshold)) {
-        windowStart += (Math.round(currentPage % windowSize / windowSize) * Math.floor(windowSize / slideThreshold));
+      if (currentPage <= lastPage - this.slideMaybe()) {
+        windowStart += (this.slideMaybe(firstPage, lastPage, currentPage, windowSize, slideScale) *
+                        this.slideThisMuch(firstPage, lastPage, currentPage, windowSize, slideScale));
       }
       var windowEnd = Math.min(lastPage + 1, windowStart + windowSize);
       return [windowStart, windowEnd];
