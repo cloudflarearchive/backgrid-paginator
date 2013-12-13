@@ -213,6 +213,16 @@
     windowSize: 10,
 
     /**
+       @property {number} the number used to divide `windowSize` by to yield the
+       number of pages slide when half of the pages from within a window have
+       been reached. For example, the default windowSize(10) / slideThreshold(2)
+       yields 5, which means the window will slide forward 5 pages as soon as
+       you've reached page 6. The smaller the yielded number the less pages to
+       slide, and vice versa.
+    */
+    slideThreshold: 2,
+
+    /**
        @property {Object.<string, Object.<string, string>>} controls You can
        disable specific control handles by omitting certain keys.
     */
@@ -256,6 +266,7 @@
     initialize: function (options) {
       this.controls = options.controls || this.controls;
       this.pageHandle = options.pageHandle || this.pageHandle;
+      this.slideThreshold = options.slideThreshold || this.slideThreshold;
 
       var collection = this.collection;
       this.listenTo(collection, "add", this.render);
@@ -279,8 +290,13 @@
       lastPage = Math.max(0, firstPage ? lastPage - 1 : lastPage);
       var currentPage = Math.max(state.currentPage, state.firstPage);
       currentPage = firstPage ? currentPage - 1 : currentPage;
-      var windowStart = Math.floor(currentPage / this.windowSize) * this.windowSize;
-      var windowEnd = Math.min(lastPage + 1, windowStart + this.windowSize);
+      var windowSize = this.windowSize;
+      var slideThreshold = this.slideThreshold;
+      var windowStart = Math.floor(currentPage / windowSize) * windowSize;
+      if (currentPage <= lastPage - Math.floor(windowSize / slideThreshold)) {
+        windowStart += (Math.round(currentPage % windowSize / windowSize) * Math.floor(windowSize / slideThreshold));
+      }
+      var windowEnd = Math.min(lastPage + 1, windowStart + windowSize);
       return [windowStart, windowEnd];
     },
 
