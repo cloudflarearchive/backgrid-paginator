@@ -229,7 +229,9 @@
 
     /**
        @property {Object.<string, Object.<string, string>>} controls You can
-       disable specific control handles by omitting certain keys.
+       disable specific control handles by setting the keys in question to
+       null. The defaults will be merged with your controls object, with your
+       changes taking precedent.
     */
     controls: {
       rewind: {
@@ -269,7 +271,7 @@
        @param {boolean} [options.goBackFirstOnSort=true]
     */
     initialize: function (options) {
-      this.controls = options.controls || this.controls;
+      this.controls = _.defaults(options.controls || {}, this.controls);
       this.pageHandle = options.pageHandle || this.pageHandle;
       this.slideScale = options.slideScale || this.slideScale;
 
