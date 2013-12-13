@@ -7,7 +7,7 @@
 */
 describe("A PageHandle", function () {
 
-  var collection;
+  var collection, paginator;
 
   beforeEach(function () {
     collection = new Backbone.PageableCollection([
@@ -18,6 +18,14 @@ describe("A PageHandle", function () {
       },
       mode: "client"
     });
+    paginator = new Backgrid.Extension.Paginator({
+      collection: collection,
+      columns: [{name: "id", cell: "integer"}]
+    });
+    // Make asyncChangePage synchronous for this test.
+    spyOn(paginator, 'asyncChangePage').andCallFake(function(pageIndex) {
+        this.collection.getPage(pageIndex);
+    });
   });
 
   describe("when under control mode", function () {
@@ -27,7 +35,8 @@ describe("A PageHandle", function () {
         collection: collection,
         isRewind: true,
         label: "first",
-        title: "first"
+        title: "first",
+        paginator: paginator
       });
       handle.render();
       expect(handle.$el.hasClass("disabled")).toBe(true);
@@ -41,7 +50,8 @@ describe("A PageHandle", function () {
         collection: collection,
         isRewind: true,
         label: "first",
-        title: "first"
+        title: "first",
+        paginator: paginator
       });
       handle.render();
       expect(handle.$el.hasClass("disabled")).toBe(false);
@@ -55,11 +65,12 @@ describe("A PageHandle", function () {
         collection: collection,
         isRewind: true,
         label: "first",
-        title: "first"
+        title: "first",
+        paginator: paginator
       });
       handle.render();
       handle.$("a").click();
-      expect(collection.state.currentPage).toBe(1);
+      expect(paginator.asyncChangePage).toHaveBeenCalledWith(1);
     });
 
     it("can render a disabled back handle if current page = first page", function () {
@@ -67,7 +78,8 @@ describe("A PageHandle", function () {
         collection: collection,
         isBack: true,
         label: "back",
-        title: "back"
+        title: "back",
+        paginator: paginator
       });
       handle.render();
       expect(handle.$el.hasClass("disabled")).toBe(true);
@@ -81,7 +93,8 @@ describe("A PageHandle", function () {
         collection: collection,
         isBack: true,
         label: "back",
-        title: "back"
+        title: "back",
+        paginator: paginator
       });
       handle.render();
       expect(handle.$el.hasClass("disabled")).toBe(false);
@@ -95,11 +108,12 @@ describe("A PageHandle", function () {
         collection: collection,
         isBack: true,
         label: "back",
-        title: "back"
+        title: "back",
+        paginator: paginator
       });
       handle.render();
       handle.$("a").click();
-      expect(collection.state.currentPage).toBe(2);
+      expect(paginator.asyncChangePage).toHaveBeenCalledWith(2);
     });
 
     it("can render a disabled forward handle if current page = last page", function () {
@@ -108,7 +122,8 @@ describe("A PageHandle", function () {
         collection: collection,
         isForward: true,
         label: "next",
-        title: "next"
+        title: "next",
+        paginator: paginator
       });
       handle.render();
       expect(handle.$el.hasClass("disabled")).toBe(true);
@@ -121,7 +136,8 @@ describe("A PageHandle", function () {
         collection: collection,
         isForward: true,
         label: "next",
-        title: "next"
+        title: "next",
+        paginator: paginator
       });
       handle.render();
       expect(handle.$el.hasClass("disabled")).toBe(false);
@@ -134,11 +150,12 @@ describe("A PageHandle", function () {
         collection: collection,
         isForward: true,
         label: "next",
-        title: "next"
+        title: "next",
+        paginator: paginator
       });
       handle.render();
       handle.$("a").click();
-      expect(collection.state.currentPage).toBe(2);
+      expect(paginator.asyncChangePage).toHaveBeenCalledWith(2);
     });
 
     it("can render a disabled fast forward handle if current page = last page", function () {
@@ -147,7 +164,8 @@ describe("A PageHandle", function () {
         collection: collection,
         isFastForward: true,
         label: "last",
-        title: "last"
+        title: "last",
+        paginator: paginator
       });
       handle.render();
       expect(handle.$el.hasClass("disabled")).toBe(true);
@@ -160,7 +178,8 @@ describe("A PageHandle", function () {
         collection: collection,
         isFastForward: true,
         label: "last",
-        title: "last"
+        title: "last",
+        paginator: paginator
       });
       handle.render();
       expect(handle.$el.hasClass("disabled")).toBe(false);
@@ -174,11 +193,12 @@ describe("A PageHandle", function () {
         collection: collection,
         isFastForward: true,
         label: "last",
-        title: "last"
+        title: "last",
+        paginator: paginator
       });
       handle.render();
       handle.$("a").click();
-      expect(collection.state.currentPage).toBe(collection.state.lastPage);
+      expect(paginator.asyncChangePage).toHaveBeenCalledWith(collection.state.lastPage);
     });
 
   });
@@ -188,7 +208,8 @@ describe("A PageHandle", function () {
     it("renders a 1-based label based on a 0-based pageIndex", function () {
       var handle = new Backgrid.Extension.PageHandle({
         collection: collection,
-        pageIndex: 0
+        pageIndex: 0,
+        paginator: paginator
       });
       handle.render();
       expect(handle.$("a").text()).toBe("1");
@@ -198,7 +219,8 @@ describe("A PageHandle", function () {
       var handle = new Backgrid.Extension.PageHandle({
         collection: collection,
         pageIndex: 0,
-        label: "a"
+        label: "a",
+        paginator: paginator
       });
       handle.render();
       expect(handle.$("a").text()).toBe("a");
@@ -207,7 +229,8 @@ describe("A PageHandle", function () {
     it("renders a default title", function () {
       var handle = new Backgrid.Extension.PageHandle({
         collection: collection,
-        pageIndex: 0
+        pageIndex: 0,
+        paginator: paginator
       });
       handle.render();
       expect(handle.$("a").attr("title")).toBe("Page 1");
@@ -217,7 +240,8 @@ describe("A PageHandle", function () {
       var handle = new Backgrid.Extension.PageHandle({
         collection: collection,
         pageIndex: 0,
-        title: "one"
+        title: "one",
+        paginator: paginator
       });
       handle.render();
       expect(handle.$("a").attr("title")).toBe("one");
@@ -227,7 +251,8 @@ describe("A PageHandle", function () {
       var handle = new Backgrid.Extension.PageHandle({
         collection: collection,
         pageIndex: 0,
-        title: _.template("No. <%- label %>")
+        title: _.template("No. <%- label %>"),
+        paginator: paginator
       });
       handle.render();
       expect(handle.$("a").attr("title")).toBe("No. 1");
@@ -236,7 +261,8 @@ describe("A PageHandle", function () {
     it("renders an active page handle if current page = pageIndex", function () {
       var handle = new Backgrid.Extension.PageHandle({
         collection: collection,
-        pageIndex: 0
+        pageIndex: 0,
+        paginator: paginator
       });
       handle.render();
       expect(handle.$el.hasClass("active")).toBe(true);
@@ -247,7 +273,8 @@ describe("A PageHandle", function () {
     it("renders an page handle if current page != pageIndex", function () {
       var handle = new Backgrid.Extension.PageHandle({
         collection: collection,
-        pageIndex: 1
+        pageIndex: 1,
+        paginator: paginator
       });
       handle.render();
       expect(handle.$el.hasClass("active")).toBe(false);
@@ -258,11 +285,12 @@ describe("A PageHandle", function () {
     it("the handle will get the page on click", function () {
       var handle = new Backgrid.Extension.PageHandle({
         collection: collection,
-        pageIndex: 1
+        pageIndex: 1,
+        paginator: paginator
       });
       handle.render();
       handle.$("a").click();
-      expect(collection.state.currentPage).toBe(2);
+      expect(paginator.asyncChangePage).toHaveBeenCalledWith(2);
     });
 
   });
@@ -272,6 +300,91 @@ describe("A PageHandle", function () {
 describe("A Paginator", function () {
 
   var collection, paginator;
+
+  describe("calling paginator.asyncChangePage()", function() {
+    describe("when there are 'beforeChangePage' listeners", function() {
+      beforeEach(function () {
+        collection = new Backbone.PageableCollection([{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}], {
+          state: {
+            currentPage: 1,
+            pageSize: 2
+          },
+          mode: "client"
+        });
+
+        paginator = new Backgrid.Extension.Paginator({
+          collection: collection,
+          columns: [{name: "id", cell: "integer"}]
+        });
+      });
+
+      it("and the listener calls proceed(void)", function() {
+        var didHear = false;
+        paginator.on('beforeChangePage', function(newPageIndex, proceed) {
+          didHear = true;
+          proceed();
+        });
+
+        paginator.asyncChangePage(2);
+        waitsFor(function() { return didHear; },'listener did not receive event');
+        runs(function() {
+            expect(collection.state.currentPage).toBe(2);
+        });
+      });
+
+      it("and the listener calls proceed(alternatePageIndex)", function() {
+        var didHear = false;
+        paginator.on('beforeChangePage', function(newPageIndex, proceed) {
+          didHear = true;
+          proceed(3);
+        });
+
+        paginator.asyncChangePage(2);
+        waitsFor(function() { return didHear; },'listener did not receive event');
+        runs(function() {
+            expect(collection.state.currentPage).toBe(3);
+        });
+      });
+
+      it("and the listener does not call proceed()", function() {
+        var didHear = false;
+        paginator.on('beforeChangePage', function(newPageIndex, proceed) {
+          didHear = true;
+        });
+
+        paginator.asyncChangePage(2);
+        waitsFor(function() { return didHear; },'listener did not receive event');
+        runs(function() {
+            expect(collection.state.currentPage).toBe(1);
+        });
+      });
+    });
+
+    describe("when there are no 'beforeChangePage' listeners", function() {
+      beforeEach(function () {
+        collection = new Backbone.PageableCollection([{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}], {
+          state: {
+            currentPage: 1,
+            pageSize: 2
+          },
+          mode: "client"
+        });
+
+        paginator = new Backgrid.Extension.Paginator({
+          collection: collection,
+          columns: [{name: "id", cell: "integer"}]
+        });
+      });
+
+      it("goes to the specified page after a minimal delay", function() {
+        paginator.asyncChangePage(2);
+        waits(0);
+        runs(function() {
+            expect(collection.state.currentPage).toBe(2);
+        });
+      });
+    });
+  });
 
   describe("when under client mode", function () {
 
@@ -286,6 +399,11 @@ describe("A Paginator", function () {
       paginator = new Backgrid.Extension.Paginator({
         collection: collection,
         columns: [{name: "id", cell: "integer"}]
+      });
+
+      // Make asyncChangePage synchronous for this test
+      spyOn(paginator, 'asyncChangePage').andCallFake(function(pageIndex) {
+        this.collection.getPage(pageIndex);
       });
 
       paginator.render();
@@ -429,6 +547,11 @@ describe("A Paginator", function () {
         collection: collection,
         columns: [{name: "id", cell: "integer"}]
       });
+      // Make asyncChangePage synchronous for this test
+      spyOn(paginator, 'asyncChangePage').andCallFake(function(pageIndex) {
+        this.collection.getPage(pageIndex);
+      });
+
       paginator.render();
 
       // next page
@@ -491,6 +614,11 @@ describe("A Paginator", function () {
         columns: [{name: "id", cell: "integer"}]
       });
 
+      // Make asyncChangePage synchronous for this test
+      spyOn(paginator, 'asyncChangePage').andCallFake(function(pageIndex) {
+        this.collection.getPage(pageIndex);
+      });
+
       paginator.render();
     });
 
@@ -502,6 +630,11 @@ describe("A Paginator", function () {
           }
         }),
         columns: [{name: "id", cell: "integer"}]
+      });
+
+      // Make asyncChangePage synchronous for this test
+      spyOn(paginator, 'asyncChangePage').andCallFake(function(pageIndex) {
+        this.collection.getPage(pageIndex);
       });
 
       paginator.$el.find("a").eq(0).click();
@@ -559,6 +692,12 @@ describe("A Paginator", function () {
         collection: collection,
         columns: [{name: "id", cell: "integer"}]
       });
+
+      // Make asyncChangePage synchronous for this test
+      spyOn(paginator, 'asyncChangePage').andCallFake(function(pageIndex) {
+        this.collection.getPage(pageIndex);
+      });
+
 
       paginator.render();
 

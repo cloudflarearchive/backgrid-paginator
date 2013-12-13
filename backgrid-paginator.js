@@ -73,7 +73,7 @@
 
     /** @property */
     events: {
-      "click a": "changePage"
+      "click a": "handleClickPaginationLink"
     },
 
     /**
@@ -119,6 +119,7 @@
        @param {string} [options.label] If provided it is used to render the
        anchor text, otherwise the normalized pageIndex will be used
        instead. Required if any of the `is*` flags is set to `true`.
+       @param {Backgrid.Extension.Paginator} options.paginator
        @param {string} [options.title]
        @param {boolean} [options.isRewind=false]
        @param {boolean} [options.isBack=false]
@@ -135,7 +136,7 @@
       var lastPage = state.lastPage;
 
       _.extend(this, _.pick(options,
-                            ["isRewind", "isBack", "isForward", "isFastForward"]));
+                            ["isRewind", "isBack", "isForward", "isFastForward", "paginator"]));
 
       var pageIndex;
       if (this.isRewind) pageIndex = firstPage;
@@ -183,11 +184,11 @@
        jQuery click event handler. Goes to the page this PageHandle instance
        represents. No-op if this page handle is currently active or disabled.
     */
-    changePage: function (e) {
+    handleClickPaginationLink: function (e) {
       e.preventDefault();
       var $el = this.$el;
       if (!$el.hasClass("active") && !$el.hasClass("disabled")) {
-        this.collection.getPage(this.pageIndex);
+        this.paginator.asyncChangePage(this.pageIndex);
       }
       return this;
     }
@@ -275,6 +276,11 @@
       var goBackFirstOnSort = options.goBackFirstOnSort !== undefined ? options.goBackFirstOnSort : this.goBackFirstOnSort;
       if (goBackFirstOnSort && collection.fullCollection) {
         this.listenTo(collection.fullCollection, "sort", function () {
+          // NOTE: Don't think we need to use asyncChangePage() here
+          // because the 'sort' operation would've already yielded a different set of rows.
+          // The purpose of asyncChangePage() is to provide a chance
+          // to prevent switching to a different set of rows.
+          // Also, the user can already opt out of 'goBackFirstOnStart' via `options`.
           collection.getFirstPage();
         });
       }
@@ -316,25 +322,28 @@
       for (var i = winStart; i < winEnd; i++) {
         handles.push(new this.pageHandle({
           collection: collection,
-          pageIndex: i
+          pageIndex: i,
+          paginator: this
         }));
       }
 
       var controls = this.controls;
+      var self = this;
       _.each(["back", "rewind", "forward", "fastForward"], function (key) {
         var value = controls[key];
         if (value) {
           var handleCtorOpts = {
             collection: collection,
             title: value.title,
-            label: value.label
+            label: value.label,
+            paginator: self
           };
           handleCtorOpts["is" + key.slice(0, 1).toUpperCase() + key.slice(1)] = true;
-          var handle = new this.pageHandle(handleCtorOpts);
+          var handle = new self.pageHandle(handleCtorOpts);
           if (key == "rewind" || key == "back") handles.unshift(handle);
           else handles.push(handle);
         }
-      }, this);
+      });
 
       return handles;
     },
@@ -361,8 +370,43 @@
       this.el.appendChild(ul);
 
       return this;
-    }
+    },
 
+    /**
+       Triggers 'beforeChangePage', expecting a listener like:
+       ```
+       paginator.on('beforeChangePage', function(newPageIndex, proceed) {
+         _.delay(function someLongOperation() {
+           proceed();
+
+           // Optionally, provide an alternate page index:
+           // proceed(1)
+         },5000);
+       });
+       ```
+    */
+    asyncChangePage: function(pageIndex) {
+      var self = this,
+          eventName = 'beforeChangePage';
+
+      // If there are no listeners, don't wait for `proceed()`
+      // NOTE: It's unfortunate, but Backbone does not provide a `this.hasListeners(eventName)`
+      var hasListeners = !_.isEmpty(this._events && this._events[eventName]);
+
+      if (hasListeners) {
+        // Always delay by a minimal amount so that user-code does not think asyncChangePage() is synchronous
+        _.delay(function() {
+          self.trigger(eventName, pageIndex, function(alternateIndex) {
+            self.collection.getPage(_.isUndefined(alternateIndex) ? pageIndex : alternateIndex);
+          });
+        });
+      } else {
+        // Always delay by a minimal amount so that user-code does not think asyncChangePage() is synchronous
+        _.delay(function() {
+          self.collection.getPage(pageIndex);
+        });
+      }
+    }
   });
 
 }));
