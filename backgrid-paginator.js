@@ -273,12 +273,18 @@
     */
     initialize: function (options) {
       var self = this;
-      self.controls = _.defaults(options.controls || {}, self.controls, Paginator.prototype.controls);
+      self.controls = _.defaults(options.controls || {}, self.controls,
+                                 Paginator.prototype.controls);
       self.pageHandle = options.pageHandle || self.pageHandle;
-      self.slideScale = options.slideScale || self.slideScale;
+      self.slideScale = options.slideScale != null ?
+          options.slideScale :
+          self.slideScale;
       self.goBackFirstOnSort = options.goBackFirstOnSort != null ?
           options.goBackFirstOnSort :
           self.goBackFirstOnSort;
+      self.renderIndexedPageHandles = options.renderIndexedPageHandles != null ?
+          options.renderIndexedPageHandles :
+          self.renderIndexedPageHandles;
 
       var collection = self.collection;
       self.listenTo(collection, "add", self.render);

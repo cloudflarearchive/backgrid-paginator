@@ -479,6 +479,58 @@ describe("A Paginator", function () {
       collection.fullCollection.sort();
       expect(paginator.$el.find("li").eq(3).hasClass("active")).toBe(true);
     });
+
+    it("displays a single page handler number 1 when the collection is empty and totalRecords is null", function () {
+      paginator = new Backgrid.Extension.Paginator({
+        collection: new (Backbone.PageableCollection.extend({
+          mode: "client"
+        }))(),
+        columns: [{name: "id", cell: "integer"}]
+      });
+
+      paginator.render();
+
+      expect(paginator.$el.find("a").length).toBe(5);
+      expect(paginator.$el.find("a[title='Page 1']").length).toBe(1);
+      expect(paginator.$el.find("a[title='Page 2']").length).toBe(0);
+    });
+
+    it("renders the overriden control page handle labels and titles", function () {
+      paginator = new (Backgrid.Extension.Paginator.extend({
+        controls: {
+          back: {
+            label: "prev",
+            title: "prev"
+          },
+          forward: {
+            label: "next",
+            title: "next"
+          }
+        }
+      }))({
+        collection: collection,
+        columns: [{name: "id", cell: "integer"}]
+      });
+      paginator.render();
+      expect(paginator.$el.find("a").length).toBe(7);
+      expect(paginator.$el.find("a").eq(1).html()).toBe("prev");
+      expect(paginator.$el.find("a").eq(5).html()).toBe("next");
+    });
+
+    it("renders no indexed handles if renderIndexedPageHandles is false", function () {
+      paginator = new Backgrid.Extension.Paginator({
+        collection: collection,
+        columns: [{name: "id", cell: "integer"}],
+        renderIndexedPageHandles: false
+      });
+      paginator.render();
+      expect(paginator.$el.find("a").length).toBe(4);
+      expect(paginator.$el.find("a").eq(0).attr("title")).toBe("First");
+      expect(paginator.$el.find("a").eq(1).attr("title")).toBe("Previous");
+      expect(paginator.$el.find("a").eq(2).attr("title")).toBe("Next");
+      expect(paginator.$el.find("a").eq(3).attr("title")).toBe("Last");
+    });
+
   });
 
   describe("when under server mode", function () {
@@ -628,27 +680,7 @@ describe("A Paginator", function () {
       expect(paginator.$el.find("a[title='Page 3']").length).toBe(1);
     });
 
-  });
-
-  describe("renders the overriden control page handle labels and titles", function () {
-
-    beforeEach(function () {
-      collection = new Backbone.PageableCollection([{id: 1}, {id: 2}, {id: 3}], {
-        state: {
-          pageSize: 1
-        },
-        mode: "client"
-      });
-
-      paginator = new Backgrid.Extension.Paginator({
-        collection: collection,
-        columns: [{name: "id", cell: "integer"}]
-      });
-
-      paginator.render();
-    });
-
-    it("defined under any mode", function () {
+    it("renders the overriden control page handle labels and titles", function () {
       paginator = new (Backgrid.Extension.Paginator.extend({
         controls: {
           back: {
@@ -669,6 +701,80 @@ describe("A Paginator", function () {
       expect(paginator.$el.find("a").eq(1).html()).toBe("prev");
       expect(paginator.$el.find("a").eq(5).html()).toBe("next");
     });
+
+    it("renders no indexed handles if renderIndexedPageHandles is false", function () {
+      paginator = new Backgrid.Extension.Paginator({
+        collection: collection,
+        columns: [{name: "id", cell: "integer"}],
+        renderIndexedPageHandles: false
+      });
+      paginator.render();
+      expect(paginator.$el.find("a").length).toBe(4);
+      expect(paginator.$el.find("a").eq(0).attr("title")).toBe("First");
+      expect(paginator.$el.find("a").eq(1).attr("title")).toBe("Previous");
+      expect(paginator.$el.find("a").eq(2).attr("title")).toBe("Next");
+      expect(paginator.$el.find("a").eq(3).attr("title")).toBe("Last");
+    });
+
+  });
+
+  describe("when under infinite mode", function () {
+
+    beforeEach(function () {
+      collection = new (Backbone.PageableCollection.extend({
+        url: "http://www.example.com",
+      }))([{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}], {
+        state: {
+          pageSize: 2,
+          totalRecords: 5
+        },
+        mode: "infinite"
+      });
+
+      paginator = new Backgrid.Extension.Paginator({
+        collection: collection,
+        columns: [{name: "id", cell: "integer"}]
+      });
+
+      paginator.render();
+    });
+
+    it("renders the overriden control page handle labels and titles", function () {
+      paginator = new (Backgrid.Extension.Paginator.extend({
+        controls: {
+          back: {
+            label: "prev",
+            title: "prev"
+          },
+          forward: {
+            label: "next",
+            title: "next"
+          }
+        }
+      }))({
+        collection: collection,
+        columns: [{name: "id", cell: "integer"}]
+      });
+      paginator.render();
+      expect(paginator.$el.find("a").length).toBe(7);
+      expect(paginator.$el.find("a").eq(1).html()).toBe("prev");
+      expect(paginator.$el.find("a").eq(5).html()).toBe("next");
+    });
+
+    it("renders no indexed handles if renderIndexedPageHandles is false", function () {
+      paginator = new Backgrid.Extension.Paginator({
+        collection: collection,
+        columns: [{name: "id", cell: "integer"}],
+        renderIndexedPageHandles: false
+      });
+      paginator.render();
+      expect(paginator.$el.find("a").length).toBe(4);
+      expect(paginator.$el.find("a").eq(0).attr("title")).toBe("First");
+      expect(paginator.$el.find("a").eq(1).attr("title")).toBe("Previous");
+      expect(paginator.$el.find("a").eq(2).attr("title")).toBe("Next");
+      expect(paginator.$el.find("a").eq(3).attr("title")).toBe("Last");
+    });
+
   });
 
 });
