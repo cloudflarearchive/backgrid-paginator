@@ -5,7 +5,7 @@
   Copyright (c) 2013 Jimmy Yuen Ho Wong and contributors
   Licensed under the MIT @license.
 */
-(function (factory) {
+(function (root, factory) {
 
   // CommonJS
   if (typeof exports == "object") {
@@ -15,13 +15,11 @@
                              require("backbone-pageable"));
   }
   // Browser
-  else if (typeof _ !== "undefined" &&
-           typeof Backbone !== "undefined" &&
-           typeof Backgrid !== "undefined") {
-    factory(_, Backbone, Backgrid);
+  else {
+    factory(root._, root.Backbone, root.Backgrid);
   }
 
-}(function (_, Backbone, Backgrid) {
+}(this, function (_, Backbone, Backgrid) {
 
   "use strict";
 
@@ -204,7 +202,7 @@
 
      @class Backgrid.Extension.Paginator
   */
-  Backgrid.Extension.Paginator = Backbone.View.extend({
+  var Paginator = Backgrid.Extension.Paginator = Backbone.View.extend({
 
     /** @property */
     className: "backgrid-paginator",
@@ -252,6 +250,9 @@
       }
     },
 
+    /** @property */
+    renderIndexedPageHandles: true,
+
     /**
        @property {Backgrid.Extension.PageHandle} pageHandle. The PageHandle
        class to use for rendering individual handles
@@ -271,18 +272,21 @@
        @param {boolean} [options.goBackFirstOnSort=true]
     */
     initialize: function (options) {
-      this.controls = _.defaults(options.controls || {}, this.controls);
-      this.pageHandle = options.pageHandle || this.pageHandle;
-      this.slideScale = options.slideScale || this.slideScale;
+      var self = this;
+      self.controls = _.defaults(options.controls || {}, self.controls, Paginator.prototype.controls);
+      self.pageHandle = options.pageHandle || self.pageHandle;
+      self.slideScale = options.slideScale || self.slideScale;
+      self.goBackFirstOnSort = options.goBackFirstOnSort != null ?
+          options.goBackFirstOnSort :
+          self.goBackFirstOnSort;
 
-      var collection = this.collection;
-      this.listenTo(collection, "add", this.render);
-      this.listenTo(collection, "remove", this.render);
-      this.listenTo(collection, "reset", this.render);
-      var goBackFirstOnSort = options.goBackFirstOnSort !== undefined ? options.goBackFirstOnSort : this.goBackFirstOnSort;
-      if (goBackFirstOnSort && collection.fullCollection) {
-        this.listenTo(collection.fullCollection, "sort", function () {
-          collection.getFirstPage();
+      var collection = self.collection;
+      self.listenTo(collection, "add", self.render);
+      self.listenTo(collection, "remove", self.render);
+      self.listenTo(collection, "reset", self.render);
+      if (collection.fullCollection) {
+        self.listenTo(collection.fullCollection, "sort", function () {
+          if (self.goBackFirstOnSort) collection.getFirstPage();
         });
       }
     },
@@ -359,11 +363,13 @@
       var window = this._calculateWindow();
       var winStart = window[0], winEnd = window[1];
 
-      for (var i = winStart; i < winEnd; i++) {
-        handles.push(new this.pageHandle({
-          collection: collection,
-          pageIndex: i
-        }));
+      if (this.renderIndexedPageHandles) {
+        for (var i = winStart; i < winEnd; i++) {
+          handles.push(new this.pageHandle({
+            collection: collection,
+            pageIndex: i
+          }));
+        }
       }
 
       var controls = this.controls;

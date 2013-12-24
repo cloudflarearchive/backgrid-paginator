@@ -468,11 +468,16 @@ describe("A Paginator", function () {
       expect(paginator.$el.find("a[title='Page 2']").length).toBe(0);
     });
 
-    it("will go back to the first page on sort", function () {
+    it("will go back to the first page on sort by default", function () {
       paginator.$el.find("a").eq(3).click();
       collection.setSorting("id", -1);
       collection.fullCollection.sort();
       expect(paginator.$el.find("li").eq(2).hasClass("active")).toBe(true);
+
+      paginator.goBackFirstOnSort = false;
+      paginator.$el.find("a").eq(3).click();
+      collection.fullCollection.sort();
+      expect(paginator.$el.find("li").eq(3).hasClass("active")).toBe(true);
     });
   });
 
@@ -625,7 +630,7 @@ describe("A Paginator", function () {
 
   });
 
-  describe("renders only the control page handles declared", function () {
+  describe("renders the overriden control page handle labels and titles", function () {
 
     beforeEach(function () {
       collection = new Backbone.PageableCollection([{id: 1}, {id: 2}, {id: 3}], {
@@ -660,9 +665,9 @@ describe("A Paginator", function () {
         columns: [{name: "id", cell: "integer"}]
       });
       paginator.render();
-      expect(paginator.$el.find("a").length).toBe(5);
-      expect(paginator.$el.find("a").eq(0).html()).toBe("prev");
-      expect(paginator.$el.find("a").eq(4).html()).toBe("next");
+      expect(paginator.$el.find("a").length).toBe(7);
+      expect(paginator.$el.find("a").eq(1).html()).toBe("prev");
+      expect(paginator.$el.find("a").eq(5).html()).toBe("next");
     });
   });
 
