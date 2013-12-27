@@ -47,10 +47,7 @@ Once you have everything installed, you can do this to trigger a distribution
 build:
 
 ```shell
-$ cd backgrid
 $ npm install
-# Recursively builds the core, extensions and put the output into lib
-$ grunt dist
 # Builds everything, including the docs and runs the tests
 $ grunt
 ```
