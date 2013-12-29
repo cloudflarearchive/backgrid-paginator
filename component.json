@@ -19,7 +19,7 @@
   "dependencies": {
     "jashkenas/underscore": "*",
     "jashkenas/backbone": "*",
-    "wyuenho/backbone-pageable": "1.4.1",
+    "wyuenho/backbone-pageable": "1.4.3",
     "wyuenho/backgrid": "*"
   },
   "license": "MIT"
