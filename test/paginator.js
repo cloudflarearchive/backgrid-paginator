@@ -168,6 +168,24 @@ describe("A PageHandle", function () {
       expect(handle.$("a").text()).toBe("last");
     });
 
+    it("can render a disabled forward handle if totalPages < 1", function () {
+      var handle = new Backgrid.Extension.PageHandle({
+        collection: new Backbone.PageableCollection(),
+        isForward: true
+      });
+      handle.render();
+      expect(handle.$el.hasClass("disabled")).toBe(true);
+    });
+
+    it("can render a disabled fast forward handle if totalPages < 1", function () {
+      var handle = new Backgrid.Extension.PageHandle({
+        collection: new Backbone.PageableCollection(),
+        isFastForward: true
+      });
+      handle.render();
+      expect(handle.$el.hasClass("disabled")).toBe(true);
+    });
+
     it("the fast forward handle will get last page on click", function () {
       collection.getPage(2);
       var handle = new Backgrid.Extension.PageHandle({
