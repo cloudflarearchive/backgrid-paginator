@@ -349,7 +349,7 @@
       var windowSize = this.windowSize;
       var slideScale = this.slideScale;
       var windowStart = Math.floor(currentPage / windowSize) * windowSize;
-      if (currentPage <= lastPage - this.slideMaybe()) {
+      if (currentPage <= lastPage - this.slideThisMuch()) {
         windowStart += (this.slideMaybe(firstPage, lastPage, currentPage, windowSize, slideScale) *
                         this.slideThisMuch(firstPage, lastPage, currentPage, windowSize, slideScale));
       }
