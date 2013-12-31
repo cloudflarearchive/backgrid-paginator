@@ -291,6 +291,23 @@ describe("A Paginator", function () {
 
   var collection, paginator;
 
+  it("can override default settings by passing options to the constructor", function () {
+    paginator = new Backgrid.Extension.Paginator({
+      collection: new Backbone.Collection(),
+      windowSize: 1,
+      slideScale: 1,
+      renderIndexedPageHandles: false,
+      pageHandle: Backgrid.Extension.PageHandle.extend({}),
+      goBackFirstOnSort: false
+    });
+
+    expect(paginator.windowSize).not.toBe(Backgrid.Extension.Paginator.prototype.windowSize);
+    expect(paginator.slideScale).not.toBe(Backgrid.Extension.Paginator.prototype.slideScale);
+    expect(paginator.renderIndexedPageHandles).not.toBe(Backgrid.Extension.Paginator.prototype.renderIndexedPageHandles);
+    expect(paginator.pageHandle).not.toBe(Backgrid.Extension.Paginator.prototype.pageHandle);
+    expect(paginator.goBackFirstOnSort).not.toBe(Backgrid.Extension.Paginator.prototype.goBackFirstOnSort);
+  });
+
   describe("when under client mode", function () {
 
     beforeEach(function () {
@@ -303,7 +320,6 @@ describe("A Paginator", function () {
 
       paginator = new Backgrid.Extension.Paginator({
         collection: collection,
-        columns: [{name: "id", cell: "integer"}]
       });
 
       paginator.render();
@@ -342,8 +358,7 @@ describe("A Paginator", function () {
             pageSize: 2
           },
           mode: "client"
-        }),
-        columns: [{name: "id", cell: "integer"}]
+        })
       });
 
       paginator.render();
@@ -358,8 +373,7 @@ describe("A Paginator", function () {
             pageSize: 2
           },
           mode: "client"
-        }),
-        columns: [{name: "id", cell: "integer"}]
+        })
       });
 
       paginator.render();
@@ -374,8 +388,7 @@ describe("A Paginator", function () {
             pageSize: 2
           },
           mode: "client"
-        }),
-        columns: [{name: "id", cell: "integer"}]
+        })
       });
 
       paginator.render();
@@ -392,8 +405,7 @@ describe("A Paginator", function () {
             pageSize: 1
           },
           mode: "client"
-        }),
-        columns: [{name: "id", cell: "integer"}]
+        })
       });
 
       paginator.$el.find("a").eq(0).click();
@@ -445,7 +457,6 @@ describe("A Paginator", function () {
       });
       paginator = new Backgrid.Extension.Paginator({
         collection: collection,
-        columns: [{name: "id", cell: "integer"}]
       });
       paginator.render();
 
@@ -502,8 +513,7 @@ describe("A Paginator", function () {
       paginator = new Backgrid.Extension.Paginator({
         collection: new (Backbone.PageableCollection.extend({
           mode: "client"
-        }))(),
-        columns: [{name: "id", cell: "integer"}]
+        }))()
       });
 
       paginator.render();
@@ -526,8 +536,7 @@ describe("A Paginator", function () {
           }
         }
       }))({
-        collection: collection,
-        columns: [{name: "id", cell: "integer"}]
+        collection: collection
       });
       paginator.render();
       expect(paginator.$el.find("a").length).toBe(7);
@@ -538,7 +547,6 @@ describe("A Paginator", function () {
     it("renders no indexed handles if renderIndexedPageHandles is false", function () {
       paginator = new Backgrid.Extension.Paginator({
         collection: collection,
-        columns: [{name: "id", cell: "integer"}],
         renderIndexedPageHandles: false
       });
       paginator.render();
@@ -562,8 +570,7 @@ describe("A Paginator", function () {
       });
 
       paginator = new Backgrid.Extension.Paginator({
-        collection: collection,
-        columns: [{name: "id", cell: "integer"}]
+        collection: collection
       });
 
       paginator.render();
@@ -575,8 +582,7 @@ describe("A Paginator", function () {
           state: {
             pageSize: 1
           }
-        }),
-        columns: [{name: "id", cell: "integer"}]
+        })
       });
 
       paginator.$el.find("a").eq(0).click();
@@ -631,8 +637,7 @@ describe("A Paginator", function () {
       collection.url = "url";
 
       paginator = new Backgrid.Extension.Paginator({
-        collection: collection,
-        columns: [{name: "id", cell: "integer"}]
+        collection: collection
       });
 
       paginator.render();
@@ -679,8 +684,7 @@ describe("A Paginator", function () {
 
     it("displays a single page handler number 1 when the collection is empty and totalRecords is null", function () {
       paginator = new Backgrid.Extension.Paginator({
-        collection: new Backbone.PageableCollection(),
-        columns: [{name: "id", cell: "integer"}]
+        collection: new Backbone.PageableCollection()
       });
 
       paginator.render();
@@ -711,8 +715,7 @@ describe("A Paginator", function () {
           }
         }
       }))({
-        collection: collection,
-        columns: [{name: "id", cell: "integer"}]
+        collection: collection
       });
       paginator.render();
       expect(paginator.$el.find("a").length).toBe(7);
@@ -723,7 +726,6 @@ describe("A Paginator", function () {
     it("renders no indexed handles if renderIndexedPageHandles is false", function () {
       paginator = new Backgrid.Extension.Paginator({
         collection: collection,
-        columns: [{name: "id", cell: "integer"}],
         renderIndexedPageHandles: false
       });
       paginator.render();
@@ -750,8 +752,7 @@ describe("A Paginator", function () {
       });
 
       paginator = new Backgrid.Extension.Paginator({
-        collection: collection,
-        columns: [{name: "id", cell: "integer"}]
+        collection: collection
       });
 
       paginator.render();
@@ -770,8 +771,7 @@ describe("A Paginator", function () {
           }
         }
       }))({
-        collection: collection,
-        columns: [{name: "id", cell: "integer"}]
+        collection: collection
       });
       paginator.render();
       expect(paginator.$el.find("a").length).toBe(7);
@@ -782,7 +782,6 @@ describe("A Paginator", function () {
     it("renders no indexed handles if renderIndexedPageHandles is false", function () {
       paginator = new Backgrid.Extension.Paginator({
         collection: collection,
-        columns: [{name: "id", cell: "integer"}],
         renderIndexedPageHandles: false
       });
       paginator.render();
