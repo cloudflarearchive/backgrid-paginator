@@ -12,5 +12,5 @@ Dependencies
 Usage
 ====
 
-See the [Paginator](http://wyuenho.github.com/backgrid/#api-paginator) section
+See the [Paginator](http://backgridjs.com/ref/extensions/paginator.html) section
 in the documentation.
