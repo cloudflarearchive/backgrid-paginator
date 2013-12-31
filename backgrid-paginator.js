@@ -213,11 +213,10 @@
 
     /**
        @property {number} slideScale the number used by #slideHowMuch to scale
-       `windowSize` to yield the number of pages to slide when half of the pages
-       from within a window have been reached. For example, the default
-       windowSize(10) * slideScale(0.5) yields 5, which means the window will
-       slide forward 5 pages as soon as you've reached page 6. The smaller the
-       scale factor the less pages to slide, and vice versa.
+       `windowSize` to yield the number of pages to slide. For example, the
+       default windowSize(10) * slideScale(0.5) yields 5, which means the window
+       will slide forward 5 pages as soon as you've reached page 6. The smaller
+       the scale factor the less pages to slide, and vice versa.
 
        Also See:
 
