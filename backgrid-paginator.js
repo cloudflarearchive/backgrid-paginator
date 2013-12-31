@@ -284,11 +284,9 @@
       self.listenTo(collection, "add", self.render);
       self.listenTo(collection, "remove", self.render);
       self.listenTo(collection, "reset", self.render);
-      if (collection.fullCollection) {
-        self.listenTo(collection.fullCollection, "sort", function () {
-          if (self.goBackFirstOnSort) collection.getFirstPage();
-        });
-      }
+      self.listenTo(collection, "backgrid:sort", function () {
+        if (self.goBackFirstOnSort) collection.getFirstPage();
+      });
     },
 
     /**
