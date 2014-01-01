@@ -1,4 +1,5 @@
 *.min.*
+api
 test/coverage
 components
 node_modules
