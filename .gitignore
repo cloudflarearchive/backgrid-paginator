@@ -1,6 +1,7 @@
 *.min.*
 api
 test/coverage
+bower_components
 components
 node_modules
 .rbenv-gemsets
