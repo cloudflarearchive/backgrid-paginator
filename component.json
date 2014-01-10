@@ -2,7 +2,7 @@
   "name": "backgrid-paginator",
   "repo": "wyuenho/backgrid-paginator",
   "description": "Backgrid.js extension for pagination.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "keywords": [
     "backbone",
     "backgrid",
@@ -20,7 +20,7 @@
     "jashkenas/underscore": "*",
     "jashkenas/backbone": "*",
     "backbone-paginator/backbone-pageable": "1.4.4",
-    "wyuenho/backgrid": "0.3.0-beta"
+    "wyuenho/backgrid": "0.3.1"
   },
   "license": "MIT"
 }

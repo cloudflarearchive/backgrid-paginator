@@ -4,7 +4,7 @@
     "backgrid-paginator.js",
     "backgrid-paginator.css"
   ],
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Backgrid.js extension for pagination.",
   "homepage": "https://github.com/wyuenho/backgrid-paginator",
   "authors": [
@@ -25,7 +25,7 @@
   "dependencies": {
     "backbone-pageable": "~1.4.4",
     "backbone": "~1.1.0",
-    "backgrid": "0.3.0-beta",
+    "backgrid": "~0.3.0",
     "underscore": "~1.5.2"
   }
 }
