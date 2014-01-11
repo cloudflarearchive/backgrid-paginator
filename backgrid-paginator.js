@@ -21,8 +21,6 @@
 
 }(this, function (_, Backbone, Backgrid) {
 
-  "use strict";
-
   /**
      PageHandle is a class that renders the actual page handles and reacts to
      click events for pagination.
