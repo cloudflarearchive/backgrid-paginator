@@ -140,7 +140,7 @@ Ext.data.JsonP.Backgrid_Extension_Paginator({
 
     ]
   },
-  "linenr": 194,
+  "linenr": 196,
   "files": [
     {
       "filename": "backgrid-paginator.js",

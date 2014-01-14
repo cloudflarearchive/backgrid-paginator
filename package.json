@@ -1,6 +1,6 @@
 {
   "name": "backgrid-paginator",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Backgrid.js extension for pagination.",
   "main": "backgrid-paginator.js",
   "scripts": {
