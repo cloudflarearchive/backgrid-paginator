@@ -501,13 +501,13 @@ describe("A Paginator", function () {
       paginator.$el.find("a").eq(3).click();
       collection.setSorting("id", -1);
       collection.fullCollection.sort();
-      collection.trigger("backgrid:sort");
+      collection.trigger("backgrid:sorted");
       expect(paginator.$el.find("li").eq(2).hasClass("active")).toBe(true);
 
       paginator.goBackFirstOnSort = false;
       paginator.$el.find("a").eq(3).click();
       collection.fullCollection.sort();
-      collection.trigger("backgrid:sort");
+      collection.trigger("backgrid:sorted");
       expect(paginator.$el.find("li").eq(3).hasClass("active")).toBe(true);
     });
 

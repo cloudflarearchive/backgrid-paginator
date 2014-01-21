@@ -195,7 +195,7 @@
         else if (this.isBack) col.getPreviousPage();
         else if (this.isForward) col.getNextPage();
         else if (this.isFastForward) col.getLastPage();
-        else col.getPage(this.pageIndex);
+        else col.getPage(this.pageIndex, {reset: true});
       }
       return this;
     }
@@ -285,16 +285,16 @@
       self.controls = _.defaults(options.controls || {}, self.controls,
                                  Paginator.prototype.controls);
 
-      _.extend(this, _.pick(options || {}, "windowSize", "pageHandle",
+      _.extend(self, _.pick(options || {}, "windowSize", "pageHandle",
                             "slideScale", "goBackFirstOnSort",
                             "renderIndexedPageHandles"));
 
-      var collection = self.collection;
-      self.listenTo(collection, "add", self.render);
-      self.listenTo(collection, "remove", self.render);
-      self.listenTo(collection, "reset", self.render);
-      self.listenTo(collection, "backgrid:sort", function () {
-        if (self.goBackFirstOnSort) collection.getFirstPage();
+      var col = self.collection;
+      self.listenTo(col, "add", self.render);
+      self.listenTo(col, "remove", self.render);
+      self.listenTo(col, "reset", self.render);
+      self.listenTo(col, "backgrid:sorted", function () {
+        if (self.goBackFirstOnSort) col.getFirstPage({reset: true});
       });
     },
 
