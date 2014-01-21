@@ -169,219 +169,6 @@ _.extend(Command.prototype, {
   }
 });
 
-Backgrid.mount = function (childView, parentView, options) {
-  var el = parentView.el, children = el.childNodes;
-  options = _.defaults(options || {}, {at: children.length});
-  childView.preRender();
-  if (options.at >= children.length) el.appendChild(childView.render().el);
-  else el.insertBefore(childView, children[options.at]);
-  parentView.delegateEvents();
-  childView.postRender();
-};
-
-// Cross-platform `addEventListener`.
-var addEventListener = function(obj, eventName, listener, useCapture) {
-  if (obj.addEventListener) return obj.addEventListener(eventName, listener, useCapture);
-  else return obj.attachEvent('on' + eventName, listener);
-};
-
-// Cross-platform `removeEventListener`.
-var removeEventListener = function(obj, eventName, listener, useCapture) {
-  if (obj.removeEventListener) return obj.removeEventListener(eventName, listener, useCapture);
-  else return obj.detachEvent('on' + eventName, listener);
-};
-
-// Caches a local reference to `Element.prototype` for faster access.
-var ElementProto = typeof Element != 'undefined' && Element.prototype;
-
-// Find the right `Element#matches` for IE>=9 and modern browsers.
-var matchesSelector = ElementProto && ElementProto.matches ||
-    ElementProto[_.find(['webkit', 'moz', 'ms', 'o'], function(prefix) {
-      return !!ElementProto[prefix + 'MatchesSelector'];
-    }) + 'MatchesSelector'] ||
-    // Make our own `Element#matches` for IE8
-    function(selector) {
-      // We'll use querySelectorAll to find all element matching the selector,
-      // then check if the given element is included in that list.
-      // Executing the query on the parentNode reduces the resulting nodeList,
-      // document doesn't have a parentNode, though.
-      var nodeList = (this.parentNode || document).querySelectorAll(selector) || [];
-      for (var i = 0, l = nodeList.length; i < l; i++) {
-        if (nodeList[i] == this) return true;
-      }
-      return false;
-    };
-
-// Cached regex to split keys for `delegate`.
-var delegateEventSplitter = /^(\S+)\s*(.*)$/;
-
-var View = Backgrid.View = Backbone.View.extend({
-
-  // Private list to hold all the DOM event delegation listeners.
-  _domEvents: [],
-
-  preRender: function () {
-    return this;
-  },
-
-  postRender: function () {
-    return this;
-  },
-
-  show: function () {
-    delete this.el.style.display;
-    return this;
-  },
-
-  hide: function () {
-    this.el.style.display = "none";
-    return this;
-  },
-
-  empty: function () {
-    var el = this.el;
-    while (el.firstChild) el.removeChild(el.firstChild);
-    return this;
-  },
-
-  // Remove this view by taking the element out of the DOM, remove all the DOM
-  // event listeners attached to it, and remove any applicable Backbone.Events
-  // listeners.
-  remove: function() {
-    this.undelegateEvents();
-    var el = this.el;
-    var parentNode = el.parentNode;
-    if (parentNode) parentNode.removeChild(el);
-    this.stopListening();
-    return this;
-  },
-
-  // Change the view's element (`this.el` property), including event
-  // re-delegation. If element is string, create or find that element and
-  // change this view's element to it. Otherwise, assume it is a DOM element
-  // and change this view's element to it.
-  setElement: function(element, delegate) {
-    if (this.el) this.undelegateEvents();
-    if (typeof element == 'string') {
-      if (element[0].trim() == '<') {
-        var el = document.createElement('div');
-        el.innerHTML = element;
-        this.el = el.firstChild;
-      }
-      else this.el = document.querySelector(element);
-    }
-    else this.el = element;
-    if (delegate !== false) this.delegateEvents();
-    return this;
-  },
-
-  // Set callbacks, where `this.events` is a hash of
-  //
-  // *{"event selector": "callback"}*
-  //
-  //     {
-  //       'mousedown .title':  'edit',
-  //       'click .button':     'save',
-  //       'click .open':       function(e) { ... }
-  //     }
-  //
-  // pairs. Callbacks will be bound to the view, with `this` set properly.
-  // Uses event delegation for efficiency.
-  // Omitting the selector binds the event to `this.el`.
-  // This only works for delegate-able events: not `focus`, `blur`, not
-  // `change`, `submit`, and `reset` in Internet Explorer, not `focusin` and
-  // `focusout` in Firefox, and not `mouseenter` and `mouseleave` for Chrome <
-  // 30 and Safari.
-  //
-  // Pass the event name, selector and the bound method to `_delegateEvents`
-  // for each mapping in `events`.
-  delegateEvents: function(events) {
-    if (!(events || (events = _.result(this, 'events')))) return this;
-    this.undelegateEvents();
-    var _delegateEvents = this._delegateEvents;
-    for (var key in events) {
-      var method = events[key];
-      if (typeof method != 'function') method = this[events[key]];
-      if (!method) continue;
-
-      var match = key.match(delegateEventSplitter);
-      var eventName = match[1], selector = match[2];
-      method = method.bind && method.bind(this) || _.bind(method, this);
-      _delegateEvents.call(this, eventName, selector, method);
-    }
-
-    return this;
-  },
-
-  // Make a event delegation handler for the given `eventName` and `selector`
-  // and attach it to `this.el`.
-  // If selector is empty, the method will be bound to `this.el`. If not, a
-  // new handler that will recursively traverse up the event target's DOM
-  // hierarchy looking for a node that matches the selector. If one is found,
-  // the event's `delegateTarget` property is set to it and the return the
-  // result of calling bound `method` with the parameters given to the
-  // handler.
-  _delegateEvents: function(eventName, selector, method) {
-    var root = this.el, domEvents = this._domEvents, handler;
-    if (!selector) handler = method;
-    else handler = function (e) {
-      var node = e.target || e.srcElement;
-      for (; node && node != root; node = node.parentNode) {
-        if (matchesSelector.call(node, selector)) {
-          e.delegateTarget = node;
-          return method.apply(this, arguments);
-        }
-      }
-    };
-
-    addEventListener(root, eventName, handler, false);
-    domEvents.push({eventName: eventName, handler: handler});
-  },
-
-  // Delegates to `_undelegateEvents` so `BaseView` subclasses can override
-  // the default event undelegation routine.
-  undelegateEvents: function() {
-    this._undelegateEvents();
-    return this;
-  },
-
-  // Clears all callbacks previously bound to the view with `delegateEvents`.
-  // You usually don't need to use this, but may wish to if you have multiple
-  // Backbone views attached to the same DOM element.
-  _undelegateEvents: function() {
-    var el = this.el, domEvents = this._domEvents, i, l, item;
-    if (el) {
-      for (i = 0, l = domEvents.length; i < l; i++) {
-        item = domEvents[i];
-        removeEventListener(el, item.eventName, item.handler, false);
-      }
-      this._domEvents = [];
-    }
-  },
-
-  // Ensure that the View has a DOM element to render into. If `this.el`
-  // exists, it must be a string, a function or a DOM element. If it is a
-  // string or a DOM element, pass it through `setElement`. If it is a
-  // function, pass its result to `setElement`. Otherwise, create an element
-  // from the `id`, `className`, `tagName` and `attributes` properties, and
-  // pass it to `setElement`.
-  _ensureElement: function() {
-    if (!this.el) {
-      var el = document.createElement(_.result(this, 'tagName'));
-      var attrs = _.extend({}, _.result(this, 'attributes'));
-      if (this.id) attrs.id = _.result(this, 'id');
-      if (this.className) attrs['class'] = _.result(this, 'className');
-      for (var k in attrs) {
-        el.setAttribute(k, attrs[k]);
-      }
-      this.setElement(el, false);
-    } else {
-      this.setElement(_.result(this, 'el'), false);
-    }
-  }
-
-});
-
 /*
   backgrid
   http://github.com/wyuenho/backgrid
@@ -841,9 +628,9 @@ _.extend(SelectFormatter.prototype, {
 
    @abstract
    @class Backgrid.CellEditor
-   @extends Backgrid.View
+   @extends Backbone.View
 */
-var CellEditor = Backgrid.CellEditor = Backgrid.View.extend({
+var CellEditor = Backgrid.CellEditor = Backbone.View.extend({
 
   /**
      Initializer.
@@ -873,7 +660,7 @@ var CellEditor = Backgrid.CellEditor = Backgrid.View.extend({
   */
   postRender: function (model, column) {
     if (column == null || column.get("name") == this.column.get("name")) {
-      this.el.focus();
+      this.$el.focus();
     }
     return this;
   }
@@ -918,7 +705,7 @@ var InputCellEditor = Backgrid.InputCellEditor = CellEditor.extend({
     InputCellEditor.__super__.initialize.apply(this, arguments);
 
     if (options.placeholder) {
-      this.el.placeholder = options.placeholder;
+      this.$el.attr("placeholder", options.placeholder);
     }
   },
 
@@ -928,7 +715,7 @@ var InputCellEditor = Backgrid.InputCellEditor = CellEditor.extend({
   */
   render: function () {
     var model = this.model;
-    this.el.defaultValue = this.formatter.fromRaw(model.get(this.column.get("name")), model);
+    this.$el.val(this.formatter.fromRaw(model.get(this.column.get("name")), model));
     return this;
   },
 
@@ -950,6 +737,7 @@ var InputCellEditor = Backgrid.InputCellEditor = CellEditor.extend({
      @param {Event} e
   */
   saveOrCancel: function (e) {
+
     var formatter = this.formatter;
     var model = this.model;
     var column = this.column;
@@ -957,13 +745,13 @@ var InputCellEditor = Backgrid.InputCellEditor = CellEditor.extend({
     var command = new Command(e);
     var blurred = e.type === "blur";
 
-    if (command.moveUp() || command.moveDown() || command.moveLeft() ||
-        command.moveRight() || command.save() || blurred) {
+    if (command.moveUp() || command.moveDown() || command.moveLeft() || command.moveRight() ||
+        command.save() || blurred) {
 
       e.preventDefault();
       e.stopPropagation();
 
-      var val = this.el.value;
+      var val = this.$el.val();
       var newValue = formatter.toRaw(val, model);
       if (_.isUndefined(newValue)) {
         model.trigger("backgrid:error", model, column, val);
@@ -984,18 +772,11 @@ var InputCellEditor = Backgrid.InputCellEditor = CellEditor.extend({
   postRender: function (model, column) {
     if (column == null || column.get("name") == this.column.get("name")) {
       // move the cursor to the end on firefox if text is right aligned
-      var el = this.el, textAlign;
-      if (window.getComputedStyle) {
-        textAlign = window.getComputedStyle(el).textAlign;
+      if (this.$el.css("text-align") === "right") {
+        var val = this.$el.val();
+        this.$el.focus().val(null).val(val);
       }
-      else if (el.currentStyle) textAlign = el.currentStyle.textAlign;
-      if (textAlign === "right") {
-        var val = el.value;
-        el.focus();
-        el.val = null;
-        el.val = val;
-      }
-      else el.focus();
+      else this.$el.focus();
     }
     return this;
   }
@@ -1012,9 +793,9 @@ var InputCellEditor = Backgrid.InputCellEditor = CellEditor.extend({
 
    @abstract
    @class Backgrid.Cell
-   @extends Backgrid.View
+   @extends Backbone.View
 */
-var Cell = Backgrid.Cell = Backgrid.View.extend({
+var Cell = Backgrid.Cell = Backbone.View.extend({
 
   /** @property */
   tagName: "td",
@@ -1054,7 +835,7 @@ var Cell = Backgrid.Cell = Backgrid.View.extend({
       this.column = new Column(this.column);
     }
 
-    var column = this.column, model = this.model, classes = this.el.classList;
+    var column = this.column, model = this.model, $el = this.$el;
 
     var formatter = Backgrid.resolveNameToClass(column.get("formatter") ||
                                                 this.formatter, "Formatter");
@@ -1066,8 +847,9 @@ var Cell = Backgrid.Cell = Backgrid.View.extend({
     this.formatter = formatter;
 
     this.editor = Backgrid.resolveNameToClass(this.editor, "CellEditor");
+
     this.listenTo(model, "change:" + column.get("name"), function () {
-      if (!classes.contains("editor")) this.render();
+      if (!$el.hasClass("editor")) this.render();
     });
 
     this.listenTo(model, "backgrid:error", this.renderError);
@@ -1077,15 +859,14 @@ var Cell = Backgrid.Cell = Backgrid.View.extend({
                     var changed = column.changedAttributes();
                     for (var key in changed) {
                       if (changed.hasOwnProperty(key)) {
-                        if (changed[key]) classes.add(key);
-                        else classes.remove(key);
+                        $el.toggleClass(key, changed[key]);
                       }
                     }
                   });
 
-    if (Backgrid.callByNeed(column.editable(), column, model)) classes.add("editable");
-    if (Backgrid.callByNeed(column.sortable(), column, model)) classes.add("sortable");
-    if (Backgrid.callByNeed(column.renderable(), column, model)) classes.add("renderable");
+    if (Backgrid.callByNeed(column.editable(), column, model)) $el.addClass("editable");
+    if (Backgrid.callByNeed(column.sortable(), column, model)) $el.addClass("sortable");
+    if (Backgrid.callByNeed(column.renderable(), column, model)) $el.addClass("renderable");
   },
 
   /**
@@ -1093,10 +874,9 @@ var Cell = Backgrid.Cell = Backgrid.View.extend({
      model's raw value for this cell's column.
   */
   render: function () {
-    this.empty();
+    this.$el.empty();
     var model = this.model;
-    this.el.appendChild(document.createTextNode(
-      this.formatter.fromRaw(model.get(this.column.get("name")), model)));
+    this.$el.text(this.formatter.fromRaw(model.get(this.column.get("name")), model));
     this.delegateEvents();
     return this;
   },
@@ -1137,10 +917,10 @@ var Cell = Backgrid.Cell = Backgrid.View.extend({
 
       // Need to redundantly undelegate events for Firefox
       this.undelegateEvents();
-      this.empty();
-      this.el.appendChild(this.currentEditor.el);
+      this.$el.empty();
+      this.$el.append(this.currentEditor.$el);
       this.currentEditor.render();
-      this.el.classList.add("editor");
+      this.$el.addClass("editor");
 
       model.trigger("backgrid:editing", model, column, this, this.currentEditor);
     }
@@ -1151,7 +931,7 @@ var Cell = Backgrid.Cell = Backgrid.View.extend({
   */
   renderError: function (model, column) {
     if (column == null || column.get("name") == this.column.get("name")) {
-      this.el.classList.add("error");
+      this.$el.addClass("error");
     }
   },
 
@@ -1159,11 +939,11 @@ var Cell = Backgrid.Cell = Backgrid.View.extend({
      Removes the editor and re-render in display mode.
   */
   exitEditMode: function () {
-    this.el.classList.remove("error");
+    this.$el.removeClass("error");
     this.currentEditor.remove();
     this.stopListening(this.currentEditor);
     delete this.currentEditor;
-    this.el.classList.remove("editor");
+    this.$el.removeClass("editor");
     this.render();
   },
 
@@ -1232,17 +1012,15 @@ var UriCell = Backgrid.UriCell = Cell.extend({
   },
 
   render: function () {
-    this.empty();
-    var model = this.model;
-    var rawValue = model.get(this.column.get("name"));
-    var formattedValue = this.formatter.fromRaw(rawValue, model);
-    var a = document.createElement("a");
-    a.tabIndex = -1;
-    a.href = rawValue;
-    a.title = this.title || formattedValue;
-    a.target = this.target;
-    a.appendChild(document.createTextNode(formattedValue));
-    this.el.appendChild(a);
+    this.$el.empty();
+    var rawValue = this.model.get(this.column.get("name"));
+    var formattedValue = this.formatter.fromRaw(rawValue, this.model);
+    this.$el.append($("<a>", {
+      tabIndex: -1,
+      href: rawValue,
+      title: this.title || formattedValue,
+      target: this.target
+    }).text(formattedValue));
     this.delegateEvents();
     return this;
   }
@@ -1265,16 +1043,14 @@ var EmailCell = Backgrid.EmailCell = StringCell.extend({
   formatter: EmailFormatter,
 
   render: function () {
-    this.empty();
+    this.$el.empty();
     var model = this.model;
-    var rawValue = model.get(this.column.get("name"));
-    var formattedValue = this.formatter.fromRaw(rawValue, model);
-    var a = document.createElement("a");
-    a.tabIndex = -1;
-    a.href = "mailto:" + rawValue;
-    a.title = formattedValue;
-    a.appendChild(document.createTextNode(formattedValue));
-    this.el.appendChild(a);
+    var formattedValue = this.formatter.fromRaw(model.get(this.column.get("name")), model);
+    this.$el.append($("<a>", {
+      tabIndex: -1,
+      href: "mailto:" + formattedValue,
+      title: formattedValue
+    }).text(formattedValue));
     this.delegateEvents();
     return this;
   }
@@ -1514,7 +1290,7 @@ var BooleanCellEditor = Backgrid.BooleanCellEditor = CellEditor.extend({
   render: function () {
     var model = this.model;
     var val = this.formatter.fromRaw(model.get(this.column.get("name")), model);
-    this.el.defaultChecked = val;
+    this.$el.prop("checked", val);
     return this;
   },
 
@@ -1546,19 +1322,19 @@ var BooleanCellEditor = Backgrid.BooleanCellEditor = CellEditor.extend({
       model.trigger("backgrid:edited", model, column, command);
     }
 
-    var el = this.el;
+    var $el = this.$el;
     if (command.save() || command.moveLeft() || command.moveRight() || command.moveUp() ||
         command.moveDown()) {
       e.preventDefault();
       e.stopPropagation();
-      var val = formatter.toRaw(el.checked, model);
+      var val = formatter.toRaw($el.prop("checked"), model);
       model.set(column.get("name"), val);
       model.trigger("backgrid:edited", model, column, command);
     }
     else if (e.type == "change") {
-      var val = formatter.toRaw(el.checked, model);
+      var val = formatter.toRaw($el.prop("checked"), model);
       model.set(column.get("name"), val);
-      el.focus();
+      $el.focus();
     }
   }
 
@@ -1589,15 +1365,15 @@ var BooleanCell = Backgrid.BooleanCell = Cell.extend({
      uncheck otherwise.
   */
   render: function () {
-    this.empty();
+    this.$el.empty();
     var model = this.model, column = this.column;
     var editable = Backgrid.callByNeed(column.editable(), column, model);
-    var input = document.createElement("input");
-    input.tabIndex = -1;
-    input.type = "checkbox";
-    input.checked = this.formatter.fromRaw(model.get(this.column.get("name")), model);
-    input.disabled = !editable;
-    this.el.appendChild(input);
+    this.$el.append($("<input>", {
+      tabIndex: -1,
+      type: "checkbox",
+      checked: this.formatter.fromRaw(model.get(column.get("name")), model),
+      disabled: !editable
+    }));
     this.delegateEvents();
     return this;
   }
@@ -1632,13 +1408,12 @@ var SelectCellEditor = Backgrid.SelectCellEditor = CellEditor.extend({
 
   setMultiple: function (multiple) {
     this.multiple = multiple;
-    this.el.multiple = multiple;
+    this.$el.prop("multiple", multiple);
   },
 
   _renderOptions: function (nvps, selectedValues) {
     var options = '';
     for (var i = 0; i < nvps.length; i++) {
-      var nvp = nvps[i];
       options = options + this.template({
         text: nvps[i][0],
         value: nvps[i][1],
@@ -1656,7 +1431,7 @@ var SelectCellEditor = Backgrid.SelectCellEditor = CellEditor.extend({
      parameter.
   */
   render: function () {
-    this.empty();
+    this.$el.empty();
 
     var optionValues = _.result(this, "optionValues");
     var model = this.model;
@@ -1668,7 +1443,7 @@ var SelectCellEditor = Backgrid.SelectCellEditor = CellEditor.extend({
     var optionText = null;
     var optionValue = null;
     var optgroupName = null;
-    var children = [];
+    var optgroup = null;
 
     for (var i = 0; i < optionValues.length; i++) {
       var optionValue = optionValues[i];
@@ -1677,7 +1452,7 @@ var SelectCellEditor = Backgrid.SelectCellEditor = CellEditor.extend({
         optionText  = optionValue[0];
         optionValue = optionValue[1];
 
-        children.push(this.template({
+        this.$el.append(this.template({
           text: optionText,
           value: optionValue,
           selected: _.indexOf(selectedValues, optionValue) > -1
@@ -1685,17 +1460,14 @@ var SelectCellEditor = Backgrid.SelectCellEditor = CellEditor.extend({
       }
       else if (_.isObject(optionValue)) {
         optgroupName = optionValue.name;
-        var optgroup = document.createElement("optgroup");
-        optgroup.label = optgroupName;
-        optgroup.innerHTML = this._renderOptions.call(this, optionValue.values, selectedValues);
-        children.push(optgroup.outerHTML);
+        optgroup = $("<optgroup></optgroup>", { label: optgroupName });
+        optgroup.append(this._renderOptions.call(this, optionValue.values, selectedValues));
+        this.$el.append(optgroup);
       }
       else {
         throw new TypeError("optionValues elements must be a name-value pair or an object hash of { name: 'optgroup label', value: [option name-value pairs] }");
       }
     }
-
-    this.el.innerHTML = children.join('');
 
     this.delegateEvents();
 
@@ -1708,20 +1480,7 @@ var SelectCellEditor = Backgrid.SelectCellEditor = CellEditor.extend({
   save: function (e) {
     var model = this.model;
     var column = this.column;
-
-    var values = null;
-    var options = this.el.options, option;
-    if (!this.multiple) values = this.el.value || null;
-    else if (this.multiple) {
-      values = [];
-      for (var i = 0, l = options.length; i < l; i++) {
-        option = options[i];
-        if (option.selected) values.push(option.value);
-      }
-      if (values.length === 0) values = null;
-    }
-
-    model.set(column.get("name"), this.formatter.toRaw(values, model));
+    model.set(column.get("name"), this.formatter.toRaw(this.$el.val(), model));
   },
 
   /**
@@ -1826,7 +1585,7 @@ var SelectCell = Backgrid.SelectCell = Cell.extend({
      @throws {TypeError} If `optionValues` is malformed.
   */
   render: function () {
-    this.empty();
+    this.$el.empty();
 
     var optionValues = _.result(this, "optionValues");
     var model = this.model;
@@ -1865,7 +1624,7 @@ var SelectCell = Backgrid.SelectCell = Cell.extend({
         }
       }
 
-      this.el.appendChild(window.document.createTextNode(selectedText.join(this.delimiter)));
+      this.$el.append(selectedText.join(this.delimiter));
     }
     catch (ex) {
       if (ex instanceof TypeError) {
@@ -2115,9 +1874,9 @@ var Columns = Backgrid.Columns = Backbone.Collection.extend({
    rendered, and apply the appropriate cell to each attribute.
 
    @class Backgrid.Row
-   @extends Backgrid.View
+   @extends Backbone.View
 */
-var Row = Backgrid.Row = Backgrid.View.extend({
+var Row = Backgrid.Row = Backbone.View.extend({
 
   /** @property */
   tagName: "tr",
@@ -2148,15 +1907,15 @@ var Row = Backgrid.Row = Backgrid.View.extend({
       var cell = this.makeCell(column, options);
       cells.splice(i, 0, cell);
 
-      var el = this.el, children = el.childNodes;
+      var $el = this.$el;
       if (i === 0) {
-        el.insertBefore(cell.render().el, el.firstChild);
+        $el.prepend(cell.render().$el);
       }
       else if (i === columns.length - 1) {
-        el.appendChild(cell.render().el);
+        $el.append(cell.render().$el);
       }
       else {
-        el.insertBefore(cell.render().el, children[i]);
+        $el.children().eq(i).before(cell.render().$el);
       }
     });
 
@@ -2188,7 +1947,7 @@ var Row = Backgrid.Row = Backgrid.View.extend({
      Renders a row of cells for this row's model.
   */
   render: function () {
-    this.empty();
+    this.$el.empty();
 
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < this.cells.length; i++) {
@@ -2212,7 +1971,7 @@ var Row = Backgrid.Row = Backgrid.View.extend({
       var cell = this.cells[i];
       cell.remove.apply(cell, arguments);
     }
-    return Row.__super__.remove.apply(this, arguments);
+    return Backbone.View.prototype.remove.apply(this, arguments);
   }
 
 });
@@ -2222,9 +1981,9 @@ var Row = Backgrid.Row = Backgrid.View.extend({
    row with a single column.
 
    @class Backgrid.EmptyRow
-   @extends Backgrid.View
+   @extends Backbone.View
 */
-var EmptyRow = Backgrid.EmptyRow = Backgrid.View.extend({
+var EmptyRow = Backgrid.EmptyRow = Backbone.View.extend({
 
   /** @property */
   tagName: "tr",
@@ -2248,7 +2007,7 @@ var EmptyRow = Backgrid.EmptyRow = Backgrid.View.extend({
      Renders an empty row.
   */
   render: function () {
-    this.empty();
+    this.$el.empty();
 
     var td = document.createElement("td");
     td.setAttribute("colspan", this.columns.length);
@@ -2275,9 +2034,9 @@ var EmptyRow = Backgrid.EmptyRow = Backgrid.View.extend({
    refresh after sorting.
 
    @class Backgrid.HeaderCell
-   @extends Backgrid.View
+   @extends Backbone.View
  */
-var HeaderCell = Backgrid.HeaderCell = Backgrid.View.extend({
+var HeaderCell = Backgrid.HeaderCell = Backbone.View.extend({
 
   /** @property */
   tagName: "th",
@@ -2301,27 +2060,23 @@ var HeaderCell = Backgrid.HeaderCell = Backgrid.View.extend({
       this.column = new Column(this.column);
     }
 
-    var column = this.column
-    var collection = this.collection
-    var el = this.el;
-    var classes = el.classList;
+    var column = this.column, collection = this.collection, $el = this.$el;
 
     this.listenTo(column, "change:editable change:sortable change:renderable",
                   function (column) {
                     var changed = column.changedAttributes();
                     for (var key in changed) {
                       if (changed.hasOwnProperty(key)) {
-                        if (changed[key]) classes.add(key);
-                        else classes.remove(key);
+                        $el.toggleClass(key, changed[key]);
                       }
                     }
                   });
     this.listenTo(column, "change:direction", this.setCellDirection);
     this.listenTo(column, "change:name change:label", this.render);
 
-    if (Backgrid.callByNeed(column.editable(), column, collection)) classes.add("editable");
-    if (Backgrid.callByNeed(column.sortable(), column, collection)) classes.add("sortable");
-    if (Backgrid.callByNeed(column.renderable(), column, collection)) classes.add("renderable");
+    if (Backgrid.callByNeed(column.editable(), column, collection)) $el.addClass("editable");
+    if (Backgrid.callByNeed(column.sortable(), column, collection)) $el.addClass("sortable");
+    if (Backgrid.callByNeed(column.renderable(), column, collection)) $el.addClass("renderable");
 
     this.listenTo(collection.fullCollection || collection, "sort", this.removeCellDirection);
   },
@@ -2331,9 +2086,7 @@ var HeaderCell = Backgrid.HeaderCell = Backgrid.View.extend({
      direction classes.
    */
   removeCellDirection: function () {
-    var classes = this.el.classList;
-    classes.remove("ascending");
-    classes.remove("descending");
+    this.$el.removeClass("ascending").removeClass("descending");
     this.column.set("direction", null);
   },
 
@@ -2344,10 +2097,8 @@ var HeaderCell = Backgrid.HeaderCell = Backgrid.View.extend({
      otherwise.
    */
   setCellDirection: function (column, direction) {
-    var classes = this.el.classList;
-    classes.remove("ascending");
-    classes.remove("descending");
-    if (column.cid == this.column.cid) classes.add(direction);
+    this.$el.removeClass("ascending").removeClass("descending");
+    if (column.cid == this.column.cid) this.$el.addClass(direction);
   },
 
   /**
@@ -2386,29 +2137,19 @@ var HeaderCell = Backgrid.HeaderCell = Backgrid.View.extend({
      column.
    */
   render: function () {
-    this.empty();
-
-    var label;
-
+    this.$el.empty();
     var column = this.column;
     var sortable = Backgrid.callByNeed(column.sortable(), column, this.collection);
-
-    if (sortable) {
-      label = document.createElement("a");
-      label.appendChild(document.createTextNode(this.column.get("label")));
-      var caret = document.createElement("b");
-      caret.className = "sort-caret";
-      label.appendChild(caret);
+    var label;
+    if(sortable){
+      label = $("<a>").text(column.get("label")).append("<b class='sort-caret'></b>");
+    } else {
+      label = document.createTextNode(column.get("label"));
     }
-    else label = document.createTextNode(column.get("label"));
-    this.el.appendChild(label);
 
-    var classes = this.el.classList;
-    classes.add(column.get("name"));
-
-    var direction = column.get("direction");
-    if (direction) classes.add(direction);
-
+    this.$el.append(label);
+    this.$el.addClass(column.get("name"));
+    this.$el.addClass(column.get("direction"));
     this.delegateEvents();
     return this;
   }
@@ -2438,7 +2179,7 @@ var HeaderRow = Backgrid.HeaderRow = Backgrid.Row.extend({
      @throws {TypeError} If options.columns or options.collection is undefined.
    */
   initialize: function () {
-    HeaderRow.__super__.initialize.apply(this, arguments);
+    Backgrid.Row.prototype.initialize.apply(this, arguments);
   },
 
   makeCell: function (column, options) {
@@ -2457,9 +2198,9 @@ var HeaderRow = Backgrid.HeaderRow = Backgrid.Row.extend({
    single row of header cells.
 
    @class Backgrid.Header
-   @extends Backgrid.View
+   @extends Backbone.View
  */
-var Header = Backgrid.Header = Backgrid.View.extend({
+var Header = Backgrid.Header = Backbone.View.extend({
 
   /** @property */
   tagName: "thead",
@@ -2490,7 +2231,7 @@ var Header = Backgrid.Header = Backgrid.View.extend({
      Renders this table head with a single row of header cells.
    */
   render: function () {
-    this.el.appendChild(this.row.render().el);
+    this.$el.append(this.row.render().$el);
     this.delegateEvents();
     return this;
   },
@@ -2502,7 +2243,7 @@ var Header = Backgrid.Header = Backgrid.View.extend({
    */
   remove: function () {
     this.row.remove.apply(this.row, arguments);
-    return Header.__super__.remove.apply(this, arguments);
+    return Backbone.View.prototype.remove.apply(this, arguments);
   }
 
 });
@@ -2520,9 +2261,9 @@ var Header = Backgrid.Header = Backgrid.View.extend({
    responsible for refreshing the rows after sorting, insertion and removal.
 
    @class Backgrid.Body
-   @extends Backgrid.View
+   @extends Backbone.View
 */
-var Body = Backgrid.Body = Backgrid.View.extend({
+var Body = Backgrid.Body = Backbone.View.extend({
 
   /** @property */
   tagName: "tbody",
@@ -2620,12 +2361,16 @@ var Body = Backgrid.Body = Backgrid.View.extend({
     var index = collection.indexOf(model);
     this.rows.splice(index, 0, row);
 
-    var el = this.el;
-    var children = el.childNodes;
-    var rowEl = row.render().el;
+    var $el = this.$el;
+    var $children = $el.children();
+    var $rowEl = row.render().$el;
 
-    if (index >= children.length) el.appendChild(rowEl);
-    else el.insertBefore(rowEl, children[index]);
+    if (index >= $children.length) {
+      $el.append($rowEl);
+    }
+    else {
+      $children.eq(index).before($rowEl);
+    }
 
     return this;
   },
@@ -2679,16 +2424,9 @@ var Body = Backgrid.Body = Backgrid.View.extend({
      instance as its sole parameter when done.
   */
   refresh: function () {
-    var parent = this.el.parentNode;
-    if (parent) parent.removeChild(this.el);
-
-    // GC the damn rows in the background
-    var oldRows = [].slice.apply(this.rows);
-    setTimeout(function () {
-      for (var i = 0; i < oldRows.length; i++) {
-        oldRows[i].remove();
-      }
-    }, 0);
+    for (var i = 0; i < this.rows.length; i++) {
+      this.rows[i].remove();
+    }
 
     this.rows = this.collection.map(function (model) {
       var row = new this.row({
@@ -2698,12 +2436,9 @@ var Body = Backgrid.Body = Backgrid.View.extend({
 
       return row;
     }, this);
-
     this._unshiftEmptyRowMayBe();
 
     this.render();
-
-    if (parent) parent.appendChild(this.el);
 
     this.collection.trigger("backgrid:refresh", this);
 
@@ -2716,7 +2451,7 @@ var Body = Backgrid.Body = Backgrid.View.extend({
      row is rendered, otherwise no row is rendered.
   */
   render: function () {
-    this.empty();
+    this.$el.empty();
 
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < this.rows.length; i++) {
@@ -2741,7 +2476,7 @@ var Body = Backgrid.Body = Backgrid.View.extend({
       var row = this.rows[i];
       row.remove.apply(row, arguments);
     }
-    return Body.__super__.remove.apply(this, arguments);
+    return Backbone.View.prototype.remove.apply(this, arguments);
   },
 
   /**
@@ -2912,9 +2647,9 @@ var Body = Backgrid.Body = Backgrid.View.extend({
 
    @abstract
    @class Backgrid.Footer
-   @extends Backgrid.View
+   @extends Backbone.View
  */
-var Footer = Backgrid.Footer = Backgrid.View.extend({
+var Footer = Backgrid.Footer = Backbone.View.extend({
 
   /** @property */
   tagName: "tfoot",
@@ -2952,7 +2687,7 @@ var Footer = Backgrid.Footer = Backgrid.View.extend({
    By default, a Grid treats each model in a collection as a row, and each
    attribute in a model as a column. To render a grid you must provide a list of
    column metadata and a collection to the Grid constructor. Just like any
-   Backgrid.View class, the grid is rendered as a DOM node fragment when you
+   Backbone.View class, the grid is rendered as a DOM node fragment when you
    call render().
 
        var grid = Backgrid.Grid({
@@ -2983,7 +2718,7 @@ var Footer = Backgrid.Footer = Backgrid.View.extend({
    Row class.
 
    @class Backgrid.Grid
-   @extends Backgrid.View
+   @extends Backbone.View
 
    See:
 
@@ -2993,7 +2728,7 @@ var Footer = Backgrid.Footer = Backgrid.View.extend({
    - Backgrid.Row
    - Backgrid.Footer
 */
-var Grid = Backgrid.Grid = Backgrid.View.extend({
+var Grid = Backgrid.Grid = Backbone.View.extend({
 
   /** @property */
   tagName: "table",
@@ -3112,17 +2847,17 @@ var Grid = Backgrid.Grid = Backgrid.View.extend({
      the it has successfully been rendered.
    */
   render: function () {
-    this.empty();
+    this.$el.empty();
 
     if (this.header) {
-      this.el.appendChild(this.header.render().el);
+      this.$el.append(this.header.render().$el);
     }
 
     if (this.footer) {
-      this.el.appendChild(this.footer.render().el);
+      this.$el.append(this.footer.render().$el);
     }
 
-    this.el.appendChild(this.body.render().el);
+    this.$el.append(this.body.render().$el);
 
     this.delegateEvents();
 
@@ -3140,7 +2875,7 @@ var Grid = Backgrid.Grid = Backgrid.View.extend({
     this.header && this.header.remove.apply(this.header, arguments);
     this.body.remove.apply(this.body, arguments);
     this.footer && this.footer.remove.apply(this.footer, arguments);
-    return Grid.__super__.remove.apply(this, arguments);
+    return Backbone.View.prototype.remove.apply(this, arguments);
   }
 
 });
