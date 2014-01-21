@@ -50,7 +50,6 @@ module.exports = function (grunt) {
           },
           vendor: [
             "test/vendor/js/jquery.js",
-            "test/vendor/js/bootstrap.js",
             "test/vendor/js/underscore.js",
             "test/vendor/js/backbone.js",
             "test/vendor/js/backgrid.js",
