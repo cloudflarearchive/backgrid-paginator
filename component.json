@@ -17,10 +17,10 @@
     "backgrid-paginator.css"
   ],
   "dependencies": {
-    "jashkenas/underscore": "^1.5.0",
-    "jashkenas/backbone": "^1.1.2",
-    "backbone-paginator/backbone.paginator": "^2.0.0",
-    "wyuenho/backgrid": "^0.3.5"
+    "jashkenas/underscore": "1.6.0",
+    "jashkenas/backbone": "1.1.2",
+    "backbone-paginator/backbone.paginator": "2.0.0",
+    "wyuenho/backgrid": "0.3.5"
   },
   "license": "MIT"
 }
