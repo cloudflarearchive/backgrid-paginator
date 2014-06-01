@@ -7,15 +7,17 @@
 */
 (function (root, factory) {
 
-  // CommonJS
-  if (typeof exports == "object") {
+  if (typeof define === 'function' && define.amd) {
+    // AMD. Register as an anonymous module.
+    define(['underscore', 'backbone', 'backgrid', 'backbone-pageable'], factory);
+  } else if (typeof exports === 'object') {
+    // CommonJS
     module.exports = factory(require("underscore"),
                              require("backbone"),
                              require("backgrid"),
                              require("backbone-pageable"));
-  }
-  // Browser
-  else {
+  } else {
+    // Browser
     factory(root._, root.Backbone, root.Backgrid);
   }
 
