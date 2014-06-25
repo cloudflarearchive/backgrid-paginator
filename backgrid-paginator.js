@@ -14,6 +14,10 @@
                              require("backgrid"),
                              require("backbone.paginator"));
   }
+  // AMD
+  else if (typeof define == "function" && define.amd) {
+    define(["underscore", "backbone", "backgrid", "backbone.paginator"], factory);
+  }    
   // Browser
   else {
     factory(root._, root.Backbone, root.Backgrid);
