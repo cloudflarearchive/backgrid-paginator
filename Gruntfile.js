@@ -53,7 +53,7 @@ module.exports = function (grunt) {
             "test/vendor/js/underscore.js",
             "test/vendor/js/backbone.js",
             "test/vendor/js/backgrid.js",
-            'test/vendor/js/backbone-pageable.js'
+            'test/vendor/js/backbone.paginator.js'
           ]
         }
       }
