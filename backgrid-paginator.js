@@ -12,8 +12,12 @@
     module.exports = factory(require("underscore"),
                              require("backbone"),
                              require("backgrid"),
-                             require("backbone-pageable"));
+                             require("backbone.paginator"));
   }
+  // AMD
+  else if (typeof define == "function" && define.amd) {
+    define(["underscore", "backbone", "backgrid", "backbone.paginator"], factory);
+  }    
   // Browser
   else {
     factory(root._, root.Backbone, root.Backgrid);
