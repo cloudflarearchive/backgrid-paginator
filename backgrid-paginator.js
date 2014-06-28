@@ -38,11 +38,10 @@
      always be inferred from the `is*` flag. Only one of the `is*` flags should
      be set to `true` at a time. For example, an instance of this class cannot
      simultaneously be a rewind control and a fast forward control. A `label`
-     and a `title` template or a string are required to be passed to the
-     constuctor under this mode. If a `title` template is provided, it __MUST__
-     accept a parameter `label`. When the `label` is provided to the `title`
-     template function, its result will be used to render the generated anchor's
-     title attribute.
+     and a `title` function or a string are required to be passed to the
+     constuctor under this mode. If a `title` function is provided, it __MUST__
+     accept a hash parameter `data`, which contains a key `label`. Its result
+     will be used to render the generated anchor's title attribute.
 
      If all of the `is*` flags is set to `false`, which is the default, an
      instance of this class will be in discrete page handle mode. An instance
@@ -54,8 +53,8 @@
      index calculated from `pageIndex` and the underlying PageableCollection
      instance. A provided `label` will still be honored however. The `title`
      parameter is also not required under this mode, in which case the default
-     `title` template will be used. You are encouraged to provide your own
-     `title` template however if you wish to localize the title strings.
+     `title` function will be used. You are encouraged to provide your own
+     `title` function however if you wish to localize the title strings.
 
      If this page handle represents the current page, an `active` class will be
      placed on the root list element.
@@ -81,10 +80,13 @@
     /**
        @property {string|function(Object.<string, string>): string} title
        The title to use for the `title` attribute of the generated page handle
-       anchor elements. It can be a string or an Underscore template function
-       that takes a mandatory `label` parameter.
+       anchor elements. It can be a string or a function that takes a `data`
+       parameter, which contains a mandatory `label` key which provides the
+       label value to be displayed.
     */
-    title: _.template('Page <%- label %>', null, {variable: null}),
+    title: function (data) {
+      return 'Page ' + data.label;
+    },
 
     /**
        @property {boolean} isRewind Whether this handle represents a rewind
