@@ -1,8 +1,8 @@
 /*
-  backbone-pageable 1.4.8
-  http://github.com/backbone-paginator/backbone-pageable
+  backbone.paginator 2.0.0
+  http://github.com/backbone-paginator/backbone.paginator
 
-  Copyright (c) 2013 Jimmy Yuen Ho Wong
+  Copyright (c) 2013 Jimmy Yuen Ho Wong and contributors
   Licensed under the MIT @license.
 */
 
@@ -470,6 +470,10 @@
                   pageCol.push(nextModel, {onRemove: true});
                 });
               }
+              else if (!pageCol.length && state.totalRecords) {
+                pageCol.reset(fullCol.models.slice(pageStart - pageSize, pageEnd - pageSize),
+                              _extend({}, options, {parse: false}));
+              }
               fullCol.remove(model);
             }
             else if (removedIndex >= pageStart && removedIndex < pageEnd) {
@@ -479,6 +483,10 @@
                 });
               }
               pageCol.remove(model);
+              if (!pageCol.length && state.totalRecords) {
+                pageCol.reset(fullCol.models.slice(pageStart - pageSize, pageEnd - pageSize),
+                              _extend({}, options, {parse: false}));
+              }
             }
           }
           else delete options.onAdd;
@@ -749,16 +757,6 @@
     },
 
     /**
-       Delegates to hasPreviousPage.
-    */
-    hasPrevious: function () {
-      var msg = "hasPrevious has been deprecated, use hasPreviousPage instead";
-      typeof console != 'undefined' && console.warn && console.warn(msg);
-
-      return this.hasPreviousPage();
-    },
-
-    /**
        @return {boolean} `true` if this collection can page forward, `false`
        otherwise.
     */
@@ -767,16 +765,6 @@
       var currentPage = this.state.currentPage;
       if (this.mode != "infinite") return currentPage < state.lastPage;
       return !!this.links[currentPage + 1];
-    },
-
-    /**
-       Delegates to hasNextPage.
-    */
-    hasNext: function () {
-      var msg = "hasNext has been deprecated, use hasNextPage instead";
-      typeof console != 'undefined' && console.warn && console.warn(msg);
-
-      return this.hasNextPage();
     },
 
     /**
@@ -1168,7 +1156,10 @@
 
       // fix up sorting parameters
       if (state.sortKey && state.order) {
-        data[queryParams.order] = this.queryParams.directions[state.order + ""];
+        var o = _isFunction(queryParams.order) ?
+          queryParams.order.call(thisCopy) :
+          queryParams.order;
+        data[o] = this.queryParams.directions[state.order + ""];
       }
       else if (!state.sortKey) delete data[queryParams.order];
 

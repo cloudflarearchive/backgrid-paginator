@@ -20,6 +20,7 @@
   "nonstandard": true,
 
   "globals": {
+    "define": false,
     "Backgrid": false,
     "Backbone": false,
     "_": false
