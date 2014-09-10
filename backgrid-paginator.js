@@ -15,7 +15,7 @@
                              require("backbone.paginator"));
   }
   // AMD. Register as an anonymous module.
-  if (typeof define === 'function' && define.amd) {
+  else if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', 'backgrid', 'backbone.paginator'], factory);
   }
   // Browser
