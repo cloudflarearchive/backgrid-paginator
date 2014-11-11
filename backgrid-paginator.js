@@ -269,6 +269,13 @@
     renderIndexedPageHandles: true,
 
     /**
+      @property renderMultiplePagesOnly. Determines if the paginator
+      should show in cases where the collection has more than one page.
+      Default is false for backwards compatibility.
+    */
+    renderMultiplePagesOnly: false,
+
+    /**
        @property {Backgrid.Extension.PageHandle} pageHandle. The PageHandle
        class to use for rendering individual handles
     */
@@ -285,6 +292,7 @@
        @param {boolean} [options.controls]
        @param {boolean} [options.pageHandle=Backgrid.Extension.PageHandle]
        @param {boolean} [options.goBackFirstOnSort=true]
+       @param {boolean} [options.renderMultiplePagesOnly=false]
     */
     initialize: function (options) {
       var self = this;
@@ -293,7 +301,8 @@
 
       _.extend(self, _.pick(options || {}, "windowSize", "pageHandle",
                             "slideScale", "goBackFirstOnSort",
-                            "renderIndexedPageHandles"));
+                            "renderIndexedPageHandles",
+                            "renderMultiplePagesOnly"));
 
       var col = self.collection;
       self.listenTo(col, "add", self.render);
@@ -409,6 +418,13 @@
     */
     render: function () {
       this.$el.empty();
+
+      var totalPages = this.collection.state.totalPages;
+
+      // Don't render if collection is empty
+      if(this.renderMultiplePagesOnly && totalPages <= 1) {
+        return this;
+      }
 
       if (this.handles) {
         for (var i = 0, l = this.handles.length; i < l; i++) {
