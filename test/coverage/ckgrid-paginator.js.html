@@ -100,6 +100,11 @@
         .cstat-no { background: #fc8c84; color: #111; }
         .fstat-no { background: #ffc520; color: #111 !important; }
         .cbranch-no { background:  yellow !important; color: #111; }
+
+        .cstat-skip { background: #ddd; color: #111; }
+        .fstat-skip { background: #ddd; color: #111 !important; }
+        .cbranch-skip { background: #ddd !important; color: #111; }
+
         .missing-if-branch {
             display: inline-block;
             margin-right: 10px;
@@ -107,9 +112,18 @@
             padding: 0 4px;
             background: black;
             color: yellow;
-            xtext-decoration: line-through;
         }
-        .missing-if-branch .typ {
+
+        .skip-if-branch {
+            display: none;
+            margin-right: 10px;
+            position: relative;
+            padding: 0 4px;
+            background: #ccc;
+            color: white;
+        }
+
+        .missing-if-branch .typ, .skip-if-branch .typ {
             color: inherit !important;
         }
 
@@ -140,7 +154,7 @@
             margin-left: 0.5em;
         }
         div.coverage-summary .yui3-datatable-sort-indicator {
-            background: url("http://yui.yahooapis.com/3.6.0/build/datatable-sort/assets/skins/sam/sort-arrow-sprite.png") no-repeat scroll 0 0 transparent;
+            background: url("https://yui-s.yahooapis.com/3.6.0/build/datatable-sort/assets/skins/sam/sort-arrow-sprite.png") no-repeat scroll 0 0 transparent;
         }
         div.coverage-summary .yui3-datatable-sorted .yui3-datatable-sort-indicator {
             background-position: 0 -20px;
@@ -176,6 +190,8 @@
             margin: 0 !important;
         }
         .com { color: #999 !important; }
+        .ignore-none { color: #999; font-weight: normal; }
+
     </style>
 </head>
 <body>
@@ -183,17 +199,18 @@
     <h1>Code coverage report for <span class="entity">backgrid-paginator.js</span></h1>
     <h2>
         
-        Statements: <span class="metric">99.1% <small>(110 / 111)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Statements: <span class="metric">98.29% <small>(115 / 117)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Branches: <span class="metric">92% <small>(69 / 75)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Branches: <span class="metric">90.36% <small>(75 / 83)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Functions: <span class="metric">100% <small>(13 / 13)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">100% <small>(14 / 14)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Lines: <span class="metric">99% <small>(99 / 100)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">98.11% <small>(104 / 106)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
+        Ignored: <span class="metric"><span class="ignore-none">none</span></span> &nbsp;&nbsp;&nbsp;&nbsp;
     </h2>
     <div class="path"><a href="../index.html">All files</a> &#187; <a href="index.html">./</a> &#187; ckgrid-paginator.js</div>
 </div>
@@ -626,7 +643,29 @@
 425
 426
 427
-428</td><td class="line-coverage"><span class="cline-any cline-neutral">&nbsp;</span>
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449
+450</td><td class="line-coverage"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -643,6 +682,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -691,7 +734,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -710,6 +752,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">185</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -752,63 +795,65 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">493</span>
-<span class="cline-any cline-yes">493</span>
-<span class="cline-any cline-yes">493</span>
-<span class="cline-any cline-yes">493</span>
-<span class="cline-any cline-yes">493</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">493</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">499</span>
+<span class="cline-any cline-yes">499</span>
+<span class="cline-any cline-yes">499</span>
+<span class="cline-any cline-yes">499</span>
+<span class="cline-any cline-yes">499</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">493</span>
-<span class="cline-any cline-yes">493</span>
-<span class="cline-any cline-yes">416</span>
-<span class="cline-any cline-yes">339</span>
-<span class="cline-any cline-yes">261</span>
+<span class="cline-any cline-yes">499</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">183</span>
-<span class="cline-any cline-yes">183</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">493</span>
+<span class="cline-any cline-yes">499</span>
+<span class="cline-any cline-yes">499</span>
+<span class="cline-any cline-yes">421</span>
+<span class="cline-any cline-yes">343</span>
+<span class="cline-any cline-yes">264</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">493</span>
-<span class="cline-any cline-yes">493</span>
-<span class="cline-any cline-yes">493</span>
+<span class="cline-any cline-yes">185</span>
+<span class="cline-any cline-yes">185</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">499</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">499</span>
+<span class="cline-any cline-yes">499</span>
+<span class="cline-any cline-yes">499</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">493</span>
-<span class="cline-any cline-yes">493</span>
-<span class="cline-any cline-yes">493</span>
-<span class="cline-any cline-yes">493</span>
-<span class="cline-any cline-yes">493</span>
-<span class="cline-any cline-yes">493</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">493</span>
-<span class="cline-any cline-yes">493</span>
-<span class="cline-any cline-yes">493</span>
-<span class="cline-any cline-yes">493</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">493</span>
+<span class="cline-any cline-yes">499</span>
+<span class="cline-any cline-yes">499</span>
+<span class="cline-any cline-yes">499</span>
+<span class="cline-any cline-yes">499</span>
+<span class="cline-any cline-yes">499</span>
+<span class="cline-any cline-yes">499</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">499</span>
+<span class="cline-any cline-yes">499</span>
+<span class="cline-any cline-yes">499</span>
+<span class="cline-any cline-yes">499</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">499</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">144</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">349</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">146</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">353</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">77</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">493</span>
-<span class="cline-any cline-yes">493</span>
+<span class="cline-any cline-yes">78</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">499</span>
+<span class="cline-any cline-yes">499</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -909,19 +954,28 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">37</span>
-<span class="cline-any cline-yes">37</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">37</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">37</span>
-<span class="cline-any cline-yes">37</span>
-<span class="cline-any cline-yes">37</span>
-<span class="cline-any cline-yes">37</span>
-<span class="cline-any cline-yes">37</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">41</span>
+<span class="cline-any cline-yes">41</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">41</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">41</span>
+<span class="cline-any cline-yes">41</span>
+<span class="cline-any cline-yes">41</span>
+<span class="cline-any cline-yes">41</span>
+<span class="cline-any cline-yes">41</span>
 <span class="cline-any cline-yes">2</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -942,7 +996,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">79</span>
+<span class="cline-any cline-yes">80</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -961,93 +1015,100 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">158</span>
+<span class="cline-any cline-yes">160</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">79</span>
-<span class="cline-any cline-yes">79</span>
+<span class="cline-any cline-yes">80</span>
+<span class="cline-any cline-yes">80</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">79</span>
-<span class="cline-any cline-yes">79</span>
-<span class="cline-any cline-yes">79</span>
-<span class="cline-any cline-yes">79</span>
-<span class="cline-any cline-yes">79</span>
-<span class="cline-any cline-yes">79</span>
-<span class="cline-any cline-yes">79</span>
-<span class="cline-any cline-yes">79</span>
-<span class="cline-any cline-yes">79</span>
-<span class="cline-any cline-yes">79</span>
+<span class="cline-any cline-yes">80</span>
+<span class="cline-any cline-yes">80</span>
+<span class="cline-any cline-yes">80</span>
+<span class="cline-any cline-yes">80</span>
+<span class="cline-any cline-yes">80</span>
+<span class="cline-any cline-yes">80</span>
+<span class="cline-any cline-yes">80</span>
+<span class="cline-any cline-yes">80</span>
+<span class="cline-any cline-yes">80</span>
+<span class="cline-any cline-yes">80</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">79</span>
-<span class="cline-any cline-yes">79</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">74</span>
-<span class="cline-any cline-yes">74</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">74</span>
-<span class="cline-any cline-yes">74</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">74</span>
-<span class="cline-any cline-yes">71</span>
-<span class="cline-any cline-yes">175</span>
+<span class="cline-any cline-yes">80</span>
+<span class="cline-any cline-yes">80</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">74</span>
-<span class="cline-any cline-yes">74</span>
-<span class="cline-any cline-yes">296</span>
-<span class="cline-any cline-yes">296</span>
-<span class="cline-any cline-yes">296</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">75</span>
+<span class="cline-any cline-yes">75</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">296</span>
-<span class="cline-any cline-yes">296</span>
-<span class="cline-any cline-yes">296</span>
-<span class="cline-any cline-yes">148</span>
+<span class="cline-any cline-yes">75</span>
+<span class="cline-any cline-yes">75</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">74</span>
+<span class="cline-any cline-yes">75</span>
+<span class="cline-any cline-yes">72</span>
+<span class="cline-any cline-yes">177</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">74</span>
+<span class="cline-any cline-yes">75</span>
+<span class="cline-any cline-yes">75</span>
+<span class="cline-any cline-yes">300</span>
+<span class="cline-any cline-yes">300</span>
+<span class="cline-any cline-yes">300</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">74</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">300</span>
+<span class="cline-any cline-yes">300</span>
+<span class="cline-any cline-yes">300</span>
+<span class="cline-any cline-yes">150</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">75</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">78</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">78</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">78</span>
+<span class="cline-any cline-yes">3</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">75</span>
 <span class="cline-any cline-yes">40</span>
 <span class="cline-any cline-yes">264</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">74</span>
+<span class="cline-any cline-yes">75</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">74</span>
-<span class="cline-any cline-yes">74</span>
-<span class="cline-any cline-yes">471</span>
+<span class="cline-any cline-yes">75</span>
+<span class="cline-any cline-yes">75</span>
+<span class="cline-any cline-yes">477</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">74</span>
+<span class="cline-any cline-yes">75</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">74</span>
+<span class="cline-any cline-yes">75</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1063,11 +1124,15 @@
 (function (root, factory) {
 &nbsp;
   // CommonJS
-  <span class="missing-if-branch" title="if path not taken"" >I</span>if (typeof exports == "object") {
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (typeof exports == "object") {
 <span class="cstat-no" title="statement not covered" >    module.exports = factory(require("underscore"),</span>
                              require("backbone"),
                              require("backgrid"),
-                             require("backbone-pageable"));
+                             require("backbone.paginator"));
+  }
+  // AMD. Register as an anonymous module.
+  else <span class="missing-if-branch" title="if path not taken" >I</span>if (typeof define === 'function' &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >define.amd)</span> {
+<span class="cstat-no" title="statement not covered" >    define(['underscore', 'backbone', 'backgrid', 'backbone.paginator'], factory);</span>
   }
   // Browser
   else {
@@ -1089,11 +1154,10 @@
      always be inferred from the `is*` flag. Only one of the `is*` flags should
      be set to `true` at a time. For example, an instance of this class cannot
      simultaneously be a rewind control and a fast forward control. A `label`
-     and a `title` template or a string are required to be passed to the
-     constuctor under this mode. If a `title` template is provided, it __MUST__
-     accept a parameter `label`. When the `label` is provided to the `title`
-     template function, its result will be used to render the generated anchor's
-     title attribute.
+     and a `title` function or a string are required to be passed to the
+     constuctor under this mode. If a `title` function is provided, it __MUST__
+     accept a hash parameter `data`, which contains a key `label`. Its result
+     will be used to render the generated anchor's title attribute.
 &nbsp;
      If all of the `is*` flags is set to `false`, which is the default, an
      instance of this class will be in discrete page handle mode. An instance
@@ -1105,8 +1169,8 @@
      index calculated from `pageIndex` and the underlying PageableCollection
      instance. A provided `label` will still be honored however. The `title`
      parameter is also not required under this mode, in which case the default
-     `title` template will be used. You are encouraged to provide your own
-     `title` template however if you wish to localize the title strings.
+     `title` function will be used. You are encouraged to provide your own
+     `title` function however if you wish to localize the title strings.
 &nbsp;
      If this page handle represents the current page, an `active` class will be
      placed on the root list element.
@@ -1132,10 +1196,13 @@
     /**
        @property {string|function(Object.&lt;string, string&gt;): string} title
        The title to use for the `title` attribute of the generated page handle
-       anchor elements. It can be a string or an Underscore template function
-       that takes a mandatory `label` parameter.
+       anchor elements. It can be a string or a function that takes a `data`
+       parameter, which contains a mandatory `label` key which provides the
+       label value to be displayed.
     */
-    title: _.template('Page &lt;%- label %&gt;', null, {variable: null}),
+    title: function (data) {
+      return 'Page ' + data.label;
+    },
 &nbsp;
     /**
        @property {boolean} isRewind Whether this handle represents a rewind
@@ -1211,7 +1278,7 @@
       this.$el.empty();
       var anchor = document.createElement("a");
       anchor.href = '#';
-      <span class="missing-if-branch" title="else path not taken"" >E</span>if (this.title) anchor.title = this.title;
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (this.title) anchor.title = this.title;
       anchor.innerHTML = this.label;
       this.el.appendChild(anchor);
 &nbsp;
@@ -1221,8 +1288,8 @@
       var pageIndex = this.pageIndex;
 &nbsp;
       if (this.isRewind &amp;&amp; currentPage == state.firstPage ||
-         this.isBack &amp;&amp; !collection.hasPrevious() ||
-         this.isForward &amp;&amp; !collection.hasNext() ||
+         this.isBack &amp;&amp; !collection.hasPreviousPage() ||
+         this.isForward &amp;&amp; !collection.hasNextPage() ||
          this.isFastForward &amp;&amp; (currentPage == state.lastPage || state.totalPages &lt; 1)) {
         this.$el.addClass("disabled");
       }
@@ -1245,7 +1312,7 @@
     changePage: function (e) {
       e.preventDefault();
       var $el = this.$el, col = this.collection;
-      <span class="missing-if-branch" title="else path not taken"" >E</span>if (!$el.hasClass("active") &amp;&amp; !$el.hasClass("disabled")) {
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (!$el.hasClass("active") &amp;&amp; !$el.hasClass("disabled")) {
         if (this.isRewind) col.getFirstPage();
         else if (this.isBack) col.getPreviousPage();
         else if (this.isForward) col.getNextPage();
@@ -1318,6 +1385,13 @@
     renderIndexedPageHandles: true,
 &nbsp;
     /**
+      @property renderMultiplePagesOnly. Determines if the paginator
+      should show in cases where the collection has more than one page.
+      Default is false for backwards compatibility.
+    */
+    renderMultiplePagesOnly: false,
+&nbsp;
+    /**
        @property {Backgrid.Extension.PageHandle} pageHandle. The PageHandle
        class to use for rendering individual handles
     */
@@ -1334,6 +1408,7 @@
        @param {boolean} [options.controls]
        @param {boolean} [options.pageHandle=Backgrid.Extension.PageHandle]
        @param {boolean} [options.goBackFirstOnSort=true]
+       @param {boolean} [options.renderMultiplePagesOnly=false]
     */
     initialize: function (options) {
       var self = this;
@@ -1342,7 +1417,8 @@
 &nbsp;
       _.extend(self, _.pick(options || <span class="branch-1 cbranch-no" title="branch not covered" >{},</span> "windowSize", "pageHandle",
                             "slideScale", "goBackFirstOnSort",
-                            "renderIndexedPageHandles"));
+                            "renderIndexedPageHandles",
+                            "renderMultiplePagesOnly"));
 &nbsp;
       var col = self.collection;
       self.listenTo(col, "add", self.render);
@@ -1404,7 +1480,7 @@
       var windowSize = this.windowSize;
       var slideScale = this.slideScale;
       var windowStart = Math.floor(currentPage / windowSize) * windowSize;
-      <span class="missing-if-branch" title="else path not taken"" >E</span>if (currentPage &lt;= lastPage - this.slideThisMuch()) {
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (currentPage &lt;= lastPage - this.slideThisMuch()) {
         windowStart += (this.slideMaybe(firstPage, lastPage, currentPage, windowSize, slideScale) *
                         this.slideThisMuch(firstPage, lastPage, currentPage, windowSize, slideScale));
       }
@@ -1437,7 +1513,7 @@
       var controls = this.controls;
       _.each(["back", "rewind", "forward", "fastForward"], function (key) {
         var value = controls[key];
-        <span class="missing-if-branch" title="else path not taken"" >E</span>if (value) {
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (value) {
           var handleCtorOpts = {
             collection: collection,
             title: value.title,
@@ -1458,6 +1534,13 @@
     */
     render: function () {
       this.$el.empty();
+&nbsp;
+      var totalPages = this.collection.state.totalPages;
+&nbsp;
+      // Don't render if collection is empty
+      if(this.renderMultiplePagesOnly &amp;&amp; totalPages &lt;= 1) {
+        return this;
+      }
 &nbsp;
       if (this.handles) {
         for (var i = 0, l = this.handles.length; i &lt; l; i++) {
@@ -1485,12 +1568,12 @@
 
 </div>
 <div class="footer">
-    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Jan 21 2014 21:30:15 GMT+0800 (HKT)</div>
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Nov 10 2014 22:40:16 GMT-0500 (EST)</div>
 </div>
 
 <script src="../prettify.js"></script>
 
-<script src="http://yui.yahooapis.com/3.6.0/build/yui/yui-min.js"></script>
+<script src="https://yui-s.yahooapis.com/3.6.0/build/yui/yui-min.js"></script>
 <script>
 
     YUI().use('datatable', function (Y) {
