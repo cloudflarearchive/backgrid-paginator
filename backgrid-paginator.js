@@ -276,7 +276,9 @@
 
     /** @property */
     goBackFirstOnSort: true,
-
+	
+	/** @property */
+	canFetchOnSort: true,
     /**
        Initializer.
 
@@ -293,14 +295,21 @@
 
       _.extend(self, _.pick(options || {}, "windowSize", "pageHandle",
                             "slideScale", "goBackFirstOnSort",
-                            "renderIndexedPageHandles"));
+                            "renderIndexedPageHandles", "canFetchOnSort"));
 
       var col = self.collection;
       self.listenTo(col, "add", self.render);
       self.listenTo(col, "remove", self.render);
       self.listenTo(col, "reset", self.render);
       self.listenTo(col, "backgrid:sorted", function () {
-        if (self.goBackFirstOnSort) col.getFirstPage({reset: true});
+        var state = this.collection.state;
+            if (self.goBackFirstOnSort && state.currentPage != state.firstPage) {
+                if (canFetchOnSort) {
+                    col.getFirstPage({reset: true});
+                } else {
+                    self.render();
+                }
+            }
       });
     },
 
