@@ -20,7 +20,7 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "api"
   ],
   "dependencies": {
     "backbone.paginator": "^2.0.0",
