@@ -9,14 +9,14 @@
 
   // CommonJS
   if (typeof exports == "object") {
-    module.exports = factory(require("lodash"),
+    module.exports = factory(require("underscore"),
                              require("backbone"),
                              require("backgrid"),
                              require("backbone.paginator"));
   }
   // AMD. Register as an anonymous module.
-  else if (typeof define === 'function' && define.amd) {
-    define(['lodash', 'backbone', 'backgrid', 'backbone.paginator'], factory);
+  else if (typeof define == "function" && define.amd) {
+    define(["underscore", "backbone", "backgrid", "backbone.paginator"], factory);
   }
   // Browser
   else {
