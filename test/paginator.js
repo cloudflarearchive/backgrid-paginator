@@ -738,6 +738,12 @@ describe("A Paginator", function () {
       expect(paginator.$el.find("a").eq(3).attr("title")).toBe("Last");
     });
 
+    it("does not refetch if already on first page when sorting", function () {
+      spyOn(collection, "getFirstPage").and.stub();
+      collection.trigger("backgrid:sorted");
+      expect(collection.getFirstPage.calls.count()).toEqual(0);
+    });
+
   });
 
   describe("when under infinite mode", function () {
