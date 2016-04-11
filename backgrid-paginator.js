@@ -197,10 +197,10 @@
       e.preventDefault();
       var $el = this.$el, col = this.collection;
       if (!$el.hasClass("active") && !$el.hasClass("disabled")) {
-        if (this.isRewind) col.getFirstPage();
-        else if (this.isBack) col.getPreviousPage();
-        else if (this.isForward) col.getNextPage();
-        else if (this.isFastForward) col.getLastPage();
+        if (this.isRewind) col.getFirstPage({reset: true});
+        else if (this.isBack) col.getPreviousPage({reset: true});
+        else if (this.isForward) col.getNextPage({reset: true});
+        else if (this.isFastForward) col.getLastPage({reset: true});
         else col.getPage(this.pageIndex, {reset: true});
       }
       return this;
