@@ -7,7 +7,7 @@ backgrid-paginator
 Dependencies
 ============
 
-[backbone-pageable](http://github.com/wyuenho/backbone-pageable/)
+[backbone.paginator](https://github.com/backbone-paginator/backbone.paginator/)
 
 Usage
 ====
