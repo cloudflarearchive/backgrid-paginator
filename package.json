@@ -5,7 +5,7 @@
   "main": "backgrid-paginator.js",
   "style": "backgrid-paginator.css",
   "scripts": {
-    "test": "grunt jasmine"
+    "test": "karma start --single-run --browsers Chrome,Firefox"
   },
   "repository": {
     "type": "git",
