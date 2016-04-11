@@ -309,7 +309,7 @@
       self.listenTo(col, "remove", self.render);
       self.listenTo(col, "reset", self.render);
       self.listenTo(col, "backgrid:sorted", function () {
-        if (self.goBackFirstOnSort) col.getFirstPage({reset: true});
+        if (self.goBackFirstOnSort && col.state.currentPage !== col.state.firstPage) col.getFirstPage({reset: true});
       });
     },
 
