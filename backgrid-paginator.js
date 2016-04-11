@@ -308,9 +308,9 @@
       self.listenTo(col, "add", self.render);
       self.listenTo(col, "remove", self.render);
       self.listenTo(col, "reset", self.render);
-      self.listenTo(col, "backgrid:sorted", function () {
-        if (self.goBackFirstOnSort) col.getFirstPage({reset: true});
-      });
+	  self.listenTo(col, "backgrid:beforeSort", function() {
+		  if (self.goBackFirstOnSort) col.state.currentPage = col.state.firstPage;
+	  });
     },
 
     /**
