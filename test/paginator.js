@@ -796,4 +796,67 @@ describe("A Paginator", function () {
 
   });
 
+  describe("hiding paginator when <= 1 total pages", function() {
+    it("renders 0 handles when the collection has 1 page", function () {
+      paginator = new Backgrid.Extension.Paginator({
+        collection: new Backbone.PageableCollection([], {
+          state: {
+            pageSize: 2
+          },
+          mode: "client"
+        }),
+        renderMultiplePagesOnly: true
+      });
+
+      paginator.render();
+
+      expect(paginator.$el.find("a").length).toBe(0);
+
+      paginator = new Backgrid.Extension.Paginator({
+        collection: new Backbone.PageableCollection([{id: 1}], {
+          state: {
+            pageSize: 2
+          },
+          mode: "client"
+        }),
+        renderMultiplePagesOnly: true
+      });
+
+      paginator.render();
+
+      expect(paginator.$el.find("a").length).toBe(0);
+
+      paginator = new Backgrid.Extension.Paginator({
+        collection: new Backbone.PageableCollection([{id: 1}, {id: 2}], {
+          state: {
+            pageSize: 2
+          },
+          mode: "client"
+        }),
+        renderMultiplePagesOnly: true
+      });
+
+      paginator.render();
+
+      expect(paginator.$el.find("a").length).toBe(0);
+
+      paginator = new Backgrid.Extension.Paginator({
+        collection: new Backbone.PageableCollection([{id: 1}, {id: 2}, {id: 3}], {
+          state: {
+            pageSize: 2
+          },
+          mode: "client"
+        }),
+        renderMultiplePagesOnly: true
+      });
+
+      paginator.render();
+
+      expect(paginator.$el.find("a").length).toBe(6);
+      expect(paginator.$el.find("a[title='Page 1']").length).toBe(1);
+      expect(paginator.$el.find("a[title='Page 2']").length).toBe(1);
+    });
+
+  });
+
 });
