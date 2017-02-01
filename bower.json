@@ -7,7 +7,7 @@
   "description": "Backgrid.js extension for pagination.",
   "homepage": "https://github.com/wyuenho/backgrid-paginator",
   "authors": [
-    "Jimmy Yuen Ho Wong <wyuenho@gmail.com>"
+    "Cloudflare, Inc <jwong@cloudflare.com>"
   ],
   "keywords": [
     "backbone",

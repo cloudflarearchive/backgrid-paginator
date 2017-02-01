@@ -15,7 +15,7 @@
     "backbone",
     "backgrid"
   ],
-  "author": "Jimmy Yuen Ho Wong <wyuenho@gmail.com>",
+  "author": "Cloudflare, Inc <jwong@cloudflare.com>",
   "license": "MIT",
   "readmeFilename": "README.md",
   "bugs": {

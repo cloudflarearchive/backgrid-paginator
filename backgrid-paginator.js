@@ -2,7 +2,7 @@
   backgrid-paginator
   http://github.com/wyuenho/backgrid
 
-  Copyright (c) 2013 Jimmy Yuen Ho Wong and contributors
+  Copyright (c) 2013-present Cloudflare, Inc and contributors
   Licensed under the MIT @license.
 */
 (function (root, factory) {
