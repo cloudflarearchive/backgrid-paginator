@@ -442,7 +442,21 @@
       this.el.appendChild(ul);
 
       return this;
-    }
+    },
+	remove: function () {
+		if (this.handles) {
+			for (var i = 0, l = this.handles.length; i < l; i++) {
+				this.handles[i].remove();
+			}
+		}
+		// COMPLETELY UNBIND THE VIEW
+		this.undelegateEvents();
+		this.$el.removeData().unbind();
+		this.stopListening();
+
+		// Remove view from DOM
+		Backbone.View.prototype.remove.call(this);
+	}
 
   });
 
