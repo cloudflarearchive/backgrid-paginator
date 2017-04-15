@@ -248,19 +248,19 @@
     */
     controls: {
       rewind: {
-        label: "《",
+        label: "&laquo;",
         title: "First"
       },
       back: {
-        label: "〈",
+        label: "&lsaquo;",
         title: "Previous"
       },
       forward: {
-        label: "〉",
+        label: "&rsaquo;",
         title: "Next"
       },
       fastForward: {
-        label: "》",
+        label: "&raquo;",
         title: "Last"
       }
     },
