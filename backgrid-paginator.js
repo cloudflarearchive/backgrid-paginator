@@ -329,7 +329,7 @@
       @return {0|1}
      */
     slideMaybe: function (firstPage, lastPage, currentPage, windowSize, slideScale) {
-      return Math.round(currentPage % windowSize / windowSize);
+      return currentPage > (windowSize / 2);
     },
 
     /**
@@ -348,7 +348,7 @@
       @return {number}
      */
     slideThisMuch: function (firstPage, lastPage, currentPage, windowSize, slideScale) {
-      return ~~(windowSize * slideScale);
+      return Math.min((lastPage + 1) - windowSize, ~~((currentPage - (windowSize / 2)) + 1));
     },
 
     _calculateWindow: function () {
@@ -363,11 +363,14 @@
       currentPage = firstPage ? currentPage - 1 : currentPage;
       var windowSize = this.windowSize;
       var slideScale = this.slideScale;
-      var windowStart = Math.floor(currentPage / windowSize) * windowSize;
-      if (currentPage <= lastPage - this.slideThisMuch()) {
+      var windowStart = 0;
+
+      if (currentPage <= lastPage) {
         windowStart += (this.slideMaybe(firstPage, lastPage, currentPage, windowSize, slideScale) *
                         this.slideThisMuch(firstPage, lastPage, currentPage, windowSize, slideScale));
       }
+
+      windowStart = Math.max(0, windowStart);
       var windowEnd = Math.min(lastPage + 1, windowStart + windowSize);
       return [windowStart, windowEnd];
     },
