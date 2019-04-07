@@ -22,7 +22,7 @@ Feature Request
 
 Please search the issue list first to see if your feature has already been
 requested. All features are tagged with the tag `enhancement`. If there already
-is an enchancement ticket, you can vote on it by putting in a +/-1 comment. If
+is an enhancement ticket, you can vote on it by putting in a +/-1 comment. If
 you cannot find the `enhancement` you are looking for, you can open a new issue.
 
 Please prefix the subject line with **[Feature Request]** so your issue will
