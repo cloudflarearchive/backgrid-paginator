@@ -64,13 +64,13 @@ Code Style
 ==========
 If you are filing a pull request, you should follow the guidelines below:
 
-Javascript
+JavaScript
 ----------
 
 Please be aware that Backgrid.js uses 2 spaces for indentation. This project has
 a [.jshintrc](.jshintrc) file defined, which is handy if you use
 [jshint](http://www.jshint.com). In general, you should follow the
-[Google Javascript Style Guide](http://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml). Backgrid.js's
+[Google JavaScript Style Guide](http://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml). Backgrid.js's
 code follows this coding style extremely closely, with 2 exceptions:
 
 - `else` should be on its own line instead of the same line of the close `}` of
@@ -110,7 +110,7 @@ If you make any changes to the documentation, since Backgrid.js uses
 [GitHub Pages](http://pages.github.com), please do so in your `gh-pages` branch
 and submit a pull request from that branch.
 
-If you change any Javascript comment documentation, you should rebuild the API
+If you change any JavaScript comment documentation, you should rebuild the API
 document. There is also a Grunt task for this purpose, but make sure you have
 installed [JSDuck](https://github.com/senchalabs/jsduck) first.
 
