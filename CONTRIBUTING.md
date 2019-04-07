@@ -107,7 +107,7 @@ Documentation
 =============
 
 If you make any changes to the documentation, since Backgrid.js uses
-[Github Pages](http://pages.github.com), please do so in your `gh-pages` branch
+[GitHub Pages](http://pages.github.com), please do so in your `gh-pages` branch
 and submit a pull request from that branch.
 
 If you change any Javascript comment documentation, you should rebuild the API
