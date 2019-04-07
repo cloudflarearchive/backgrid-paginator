@@ -525,7 +525,7 @@ describe("A Paginator", function () {
       expect(paginator.$el.find("a[title='Page 2']").length).toBe(0);
     });
 
-    it("renders the overriden control page handle labels and titles", function () {
+    it("renders the overridden control page handle labels and titles", function () {
       paginator = new (Backgrid.Extension.Paginator.extend({
         controls: {
           back: {
@@ -704,7 +704,7 @@ describe("A Paginator", function () {
       expect(paginator.$el.find("a[title='Page 3']").length).toBe(1);
     });
 
-    it("renders the overriden control page handle labels and titles", function () {
+    it("renders the overridden control page handle labels and titles", function () {
       paginator = new (Backgrid.Extension.Paginator.extend({
         controls: {
           back: {
@@ -766,7 +766,7 @@ describe("A Paginator", function () {
       paginator.render();
     });
 
-    it("renders the overriden control page handle labels and titles", function () {
+    it("renders the overridden control page handle labels and titles", function () {
       paginator = new (Backgrid.Extension.Paginator.extend({
         controls: {
           back: {
